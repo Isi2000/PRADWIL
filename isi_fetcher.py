@@ -1,29 +1,34 @@
 import requests
 import xml.etree.ElementTree as ET
-from tqdm import tqdm
 import json
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 import time
 
+def split_ids(id_list, cluster_size=10):
+    return [id_list[i:i + cluster_size] for i in range(0, len(id_list), cluster_size)]
 
-def get_pubmed_ids(term, retstart, retmax):
+def read_ids_from_csv(file_path):
     """
-    Fetch PubMed IDs for a specific term.
+    Read PubMed IDs from a CSV file.
 
     Args:
-        term (str): The search term.
-        retstart (int): The index of the first record to retrieve.
-        retmax (int, optional): The maximum number of records to retrieve. Default is 50.
+        file_path (str): Path to the CSV file containing PubMed IDs.
 
     Returns:
         list: List of PubMed IDs.
     """
-    esearch_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={term}&retstart={retstart}&retmax={retmax}&format=json&sort=relevance"
-    response = requests.get(esearch_url)
-    ids = response.json()["esearchresult"]["idlist"]
-    return ids
+    with open(file_path, 'r') as file:
+        # Read the entire line and split IDs by comma
+        ids_line = file.readline().strip()
+        ids_list = ids_line.split(',')
+        
+
+    # Filter out empty strings and convert to integers
+    ids_list = [str(int(id)) for id in ids_list if id.strip().isdigit()]
+    print(ids_list)
+    return ids_list  # Adjust if necessary
 
 def parse_article(article):
     """
@@ -87,31 +92,33 @@ def parse_article(article):
         "Authors": authors,
         "MeSH_Terms": mesh_terms
     }
+def fetch_data_for_ids(ids, retries=6, delay=1):
+    """
+    Fetch and parse PubMed data for a list of PubMed IDs.
 
-def fetch_data_for_ids(ids, retries=5, delay=0.5):
+    Args:
+        ids (list): List of PubMed IDs.
+        retries (int): Number of retries for the request.
+        delay (int): Delay between retries in seconds.
+
+    Returns:
+        list: List of dictionaries containing parsed article data.
+    """
     for attempt in range(retries):
         id_string = ",".join(str(id) for id in ids)
         efetch_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={id_string}&rettype=abstract"
+        
         response = requests.get(efetch_url)
+        
         if response.status_code == 200:
-            try:
-                root = ET.fromstring(response.text)
-                return [parse_article(article) for article in root.findall(".//PubmedArticle")]
-            except ET.ParseError as e:
-                print(f"Error parsing XML for IDs: {ids}")
-                print(f"Error details: {e}")
-                break
-            except Exception as e:
-                print(f"An unexpected error occurred for IDs: {ids}")
-                print(f"Error details: {e}")    
-                break
+            root = ET.fromstring(response.text)
+            return [parse_article(article) for article in root.findall(".//PubmedArticle")]
+        elif response.status_code == 429:
+            print(f"Rate limit hit. Retrying after {delay} seconds...")
             time.sleep(delay)
+            delay *= 2  # Exponential backoff
         else:
-            print(f"Failed to fetch data for IDs: {ids}. Status Code: {response.status_code}")
-            print(f"Failed XML:\n{response.text}")
-            time.sleep(delay)
-            porcodio.append(ids)
-            #np.savetxt(f"./DATA/{ids[0]}.csv", ids, delimiter=",", fmt='%s')
+            print(f"Failed to fetch data. Status Code: {response.status_code}")
             break
 
     return []
@@ -128,25 +135,25 @@ def fetch_pubmed(ids_list):
     """
     all_results = []
 
-    for ids in ids_list:
+    for ids in (ids_list):
         fetched_data = fetch_data_for_ids(ids)
         all_results.extend(fetched_data)
 
     return pd.DataFrame(all_results)
 
-
 # Usage
-retmax = 50
+file_path = 'IDS.csv'
+
+
 data = []
-for i in tqdm(range(100)):
-    ids = get_pubmed_ids("Prader Willi", retstart=i * retmax, retmax=retmax)
-    print(ids)
-    df = fetch_pubmed(ids)
-    df.to_json(f"./DATA/pubmed_data_{i}_nuovi.json", orient="records", lines=True)
+ids = read_ids_from_csv("IDS.csv")
+print(ids)
+splitted_ids = split_ids(ids)
+print(type(splitted_ids))
+for i in tqdm(splitted_ids):
+    df = fetch_pubmed(i)
+    df.to_json("pubmed_data_pw.json", orient="records", lines=True)
     data.append(df)
-#print(data
-unique_df = pd.concat(data)
-
-unique_df.to_json("pubmed_data.json", orient="records", lines=True)
-
-    
+#unique_df = pd.concat(data)
+print(data)
+#unique_df.to_json("pubmed_prader_willi.json", orient="records", lines=True)
