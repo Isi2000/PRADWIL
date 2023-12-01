@@ -4,22 +4,12 @@ from networkx.algorithms import bipartite
 import matplotlib.pyplot as plt
 import pandas as pd
 import random
-from datetime import datetime, timedelta
+from tqdm import tqdm
 
 # Read the data-------------------------------------------------------------
 
-# These data are just for testing purposes
-num_articoli = 5000
-articoli_ids = range(1, num_articoli + 1)
-
-autori_per_articolo = [random.sample(range(1, 10000), random.randint(1, 5)) for _ in range(num_articoli)]
-
-date_pubblicazione = [datetime(2020, 1, 1) + timedelta(days=random.randint(1, 10000)) for _ in range(num_articoli)]
-
-data = {'Id': articoli_ids, 'Authors': autori_per_articolo, 'Dates': date_pubblicazione}
-rows = len(data['Id'])
-print('Number of rows:', rows)
-df = pd.DataFrame(data)
+df = pd.read_json("data.json")
+print(df)
 
 # Pre analysis of the data-------------------------------------------------
 
@@ -66,8 +56,8 @@ def count_authors(authors_list):
     return len(authors_list)
 
 # Adding the year interval column
-df['Dates'] = df['Dates'].astype(str)
-df['Year'] = df['Dates'].str.split('-', expand=True)[0]
+df['Date'] = df['Date'].astype(str)
+df['Year'] = df['Date'].str.split('-', expand=True)[0]
 
 df['Year'] = df['Year'].apply(convert_year)
 
@@ -227,6 +217,24 @@ print('Clustering coefficient (unweighted):', cluster_coeff_unweighted)
 #print('Average shortest path:', avg_shortest_path)
 #avg_shortest_path_unweighted = nx.average_shortest_path_length(cc)
 #print('Average shortest path (unweighted):', avg_shortest_path_unweighted)
+
+#Plotting the collaboration network-------------------------------------------
+
+with tqdm(total=100, desc="Plotting", position=0, leave=True) as pbar:
+    def update_progress(*args, **kwargs):
+        pbar.update(1)
+
+    # Aggiorna la funzione di progresso di Matplotlib
+    plt.show = update_progress
+
+    # Plot del grafo di collaborazione
+    pos = nx.spring_layout(cc)
+    nx.draw(cc, pos, node_size=0.1, with_labels=False)
+
+    # Chiudi la barra di avanzamento alla fine
+    pbar.close()
+
+plt.show()
 
 # Adding attributes to the nodes---------------------------------------------
 
