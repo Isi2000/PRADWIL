@@ -4,7 +4,9 @@ from networkx.algorithms import bipartite
 import matplotlib.pyplot as plt
 import pandas as pd
 import random
+import os
 from tqdm import tqdm
+import numpy as np
 
 # Read the data-------------------------------------------------------------
 
@@ -57,12 +59,21 @@ def count_authors(authors_list):
 
 # Adding the year interval column
 df['Date'] = df['Date'].astype(str)
+
+# Minimum year
+min_year = df['Date'].str.split('-', expand=True)[0].min()
+print('Minimum year:', min_year)
+
+# Maximum year
+max_year = df['Date'].str.split('-', expand=True)[0].max()
+print('Maximum year:', max_year)
+
 df['Year'] = df['Date'].str.split('-', expand=True)[0]
 
 df['Year'] = df['Year'].apply(convert_year)
 
 # Adding the year interval column
-interval_length = 3
+interval_length = 5
 df['YearInterval'] = (df['Year'] // interval_length) * interval_length
 
 # Computing the number of articles and authors per year interval
@@ -83,11 +94,12 @@ result_df['AvgAuthorsPerArticle'] = result_df['NumAuthors'] / result_df['NumArti
 
 # Saving the results in a JSON file
 
-"""
+os.makedirs('./results', exist_ok=True)
+
 print('Saving the results...')
 result_df.to_json('./results/num_paper_authors.json', orient='records', lines=True, index = True)
 print('Results saved!')
-"""
+
 
 #Building the bipartite graph------------------------------------------------
 
@@ -191,11 +203,10 @@ cc = C.subgraph(largest_cc).copy() #ATTENTO QUI STO FACENDO UNA COPIA
 print('Computing the degree sequence...')
 degree_sequence = sorted((d for n, d in C.degree()), reverse=True)
 
-"""
+
 print('Saving the results...')
 np.save('./results/degree_sequence.npy', degree_sequence)
 print('Degree sequence saved!')
-"""
 
 # Smallworldness property----------------------------------------------------
 # Questa parte la lascio commentata perchè ci mette troppo tempo.
