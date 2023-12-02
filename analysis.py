@@ -7,80 +7,24 @@ import random
 import os
 from tqdm import tqdm
 import numpy as np
+import analysis_functions as af
 
 # Read the data-------------------------------------------------------------
 
 df = pd.read_json("data.json")
-print(df)
 
 # Pre analysis of the data-------------------------------------------------
 
-def convert_year(year):
-    """
-    Convert a string representing a year into an integer.
-    
-    Parameters
-    ----------
-    year : str
-        The year to convert.
-    
-    Returns
-    -------
-    int
-        The year converted into an integer.
-    
-    Raises
-    ------
-    ValueError
-        If the year cannot be converted into an integer.
-        
-    """
-    try:
-        return int(year)
-    except ValueError:
-        return pd.NaT
+df['Year'] = df['Date'].apply(af.convert_year)
 
-def count_authors(authors_list):
-    """
-    Count the number of authors of a paper.
-
-    Parameters
-    ----------
-    authors_list : list
-        The list of authors of a paper.
-    
-    Returns
-    -------
-    int
-        The number of authors of the paper.
-    
-    """
-    return len(authors_list)
-
-# Adding the year interval column
-df['Date'] = df['Date'].astype(str)
-
-# Minimum year
-min_year = df['Date'].str.split('-', expand=True)[0].min()
-print('Minimum year:', min_year)
-
-# Maximum year
-max_year = df['Date'].str.split('-', expand=True)[0].max()
-print('Maximum year:', max_year)
-
-df['Year'] = df['Date'].str.split('-', expand=True)[0]
-
-df['Year'] = df['Year'].apply(convert_year)
-
-# Adding the year interval column
-interval_length = 5
-df['YearInterval'] = (df['Year'] // interval_length) * interval_length
+df = af.add_year_interval(df, interval_length = 5)
 
 # Computing the number of articles and authors per year interval
 print('Computing the number of articles and authors per year interval...')
+
 num_articles_per_interval = df['YearInterval'].value_counts().sort_index()
 
-df['NumAuthors'] = df['Authors'].apply(count_authors)
+df['NumAuthors'] = df['Authors'].apply(af.count_authors)
 num_authors_per_interval = df.groupby('YearInterval')['NumAuthors'].sum().sort_index()
 
 result_df = pd.DataFrame({
@@ -100,27 +44,13 @@ print('Saving the results...')
 result_df.to_json('./results/num_paper_authors.json', orient='records', lines=True, index = True)
 print('Results saved!')
 
-
 #Building the bipartite graph------------------------------------------------
 
 print('Creating the author-paper bipartite graph...')
 
-G = nx.Graph()
-
-num_paper = 0
-# Add nodes and edges from the DataFrame
-for _, row in df.iterrows():
-    node_id = row['Id']
-    authors = row['Authors']
-    G.add_node(node_id, bipartite=0)  # bipartite=0 for 'Id' nodes
-    num_paper += 1
-    if len(authors) > 0:
-        for author in authors:
-            G.add_node(author, bipartite=1)  # bipartite=1 for 'Authors' nodes
-            G.add_edge(node_id, author)
+G = af.create_bipartite_graph(df)
 
 print('Done!')
-print(num_paper)
 
 number_of_authors_nodes = len([node for node in G.nodes if G.nodes[node]['bipartite'] == 1])
 # Non ho proprio idea del perchè mi dia un numero di paper diverso da quello che mi aspetto:
@@ -138,15 +68,17 @@ print('Total number of nodes:', total_number_of_nodes)
 # Secondo me ci conviene riportare in relazione solo una percentuale del vero 
 # grafo, perchè altrimenti non si vede niente.
 
-subset_nodes = list(G.nodes)[:500]
-
 # bipartite layout
-pos = nx.bipartite_layout(G, subset_nodes)
+authors_nodes = {n for n, d in G.nodes(data=True) if d["bipartite"] == 1}
+authors_nodes_subset = set(random.sample(authors_nodes, 50))
+authors_nodes_subset_subgraph = G.subgraph(authors_nodes_subset).copy()
 
-node_size = 0.5
+pos = nx.bipartite_layout(G, nodes= authors_nodes_subset)
+
+node_size = [deg for _, deg in authors_nodes_subset_subgraph.degree()]
 edge_width = 0.1
 
-nx.draw(G, pos, nodelist=subset_nodes, with_labels=False,
+nx.draw(G, pos, nodelist=authors_nodes_subset, with_labels=False,
         node_color='skyblue', node_size=node_size, width=edge_width)
 plt.show()
 
@@ -231,6 +163,7 @@ print('Clustering coefficient (unweighted):', cluster_coeff_unweighted)
 
 #Plotting the collaboration network-------------------------------------------
 
+"""
 with tqdm(total=100, desc="Plotting", position=0, leave=True) as pbar:
     def update_progress(*args, **kwargs):
         pbar.update(1)
@@ -246,6 +179,7 @@ with tqdm(total=100, desc="Plotting", position=0, leave=True) as pbar:
     pbar.close()
 
 plt.show()
+"""
 
 # Adding attributes to the nodes---------------------------------------------
 
@@ -327,8 +261,83 @@ for influential_author in Borda_score_sum_sorted[:10]:
 """
 # Louvain communities---------------------------------------------------------
 
-print('Computing the Louvain communities...')
 partition = community.best_partition(cc, weight='weight')
+
+from collections import defaultdict
+
+# Supponendo che 'partition' sia il risultato di community.best_partition(cc)
+partition = community.best_partition(cc, weight='weight')
+
+# Creare un dizionario di liste dove le chiavi sono gli identificatori delle comunità
+community_lists = defaultdict(list)
+
+for node, community_id in partition.items():
+    community_lists[community_id].append(node)
+
+# Ora 'community_lists' è un dizionario in cui le chiavi sono gli identificatori delle comunità
+# e i valori sono le liste di nodi appartenenti a ciascuna comunità.
+
+# Convertire il dizionario in una lista di liste
+list_of_communities = list(community_lists.values())
+
+list_of_communities.sort(key=len, reverse=True)
+
+main_community = list_of_communities[0]
+
+# Estrai il sottografo corrispondente alla main community
+main_community_subgraph = cc.subgraph(main_community).copy()
+
+# Imposta il layout del grafico
+pos = nx.spring_layout(main_community_subgraph)
+
+# Estrai il peso degli archi
+edge_weights = [main_community_subgraph[u][v]['weight'] for u, v in main_community_subgraph.edges()]
+
+# Imposta la grandezza dei nodi proporzionale al loro grado
+node_size = [deg * 10 for _, deg in main_community_subgraph.degree()]
+
+# Imposta lo spessore degli archi proporzionale al loro peso
+edge_width = [weight * 2 for weight in edge_weights]
+
+# Imposta la grandezza dei label
+label_font_size = 6
+
+# Disegna il grafico
+nx.draw(main_community_subgraph, pos, with_labels=False, font_size=label_font_size,
+        node_size=node_size, width=edge_width, font_color='black', alpha=0.7)
+
+# Visualizza il grafico
+plt.show()
+
+# Generare il grafico con tutte le comunità colorate in modo diverso 
+
+pos = nx.spring_layout(cc)
+
+# Estrai il peso degli archi
+edge_weights = [cc[u][v]['weight'] for u, v in cc.edges()]
+
+# Imposta la grandezza dei nodi proporzionale al loro grado
+node_size = [deg*0.2 for _, deg in cc.degree()]
+
+# Imposta lo spessore degli archi proporzionale al loro peso
+edge_width = [weight*0.1 for weight in edge_weights]
+
+# Calcola il grado di ciascun nodo e ordina i nodi per grado in modo decrescente
+nodes_by_degree = sorted(cc.degree, key=lambda x: x[1], reverse=True)
+
+# Estrai solo i primi 10 nodi
+top_10_nodes = [node for node, _ in nodes_by_degree[:10]]
+
+# Crea un dizionario di etichette per i primi 10 nodi
+labels = {node: node for node in top_10_nodes}
+
+# Imposta la grandezza dei label
+label_font_size = 6
+
+nx.draw(cc, pos, with_labels=False, labels = labels, font_size=label_font_size,
+        node_size=node_size, width=edge_width, font_color='black', alpha=0.7,
+        node_color=list(partition.values()))
+plt.show()
 
 # Generare il dendrogramma
 dendrogram_data = community.generate_dendrogram(cc, weight='weight')
