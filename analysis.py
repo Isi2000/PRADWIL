@@ -115,6 +115,8 @@ filtered_connected_components = \
 
 print('Number of connected components: ', number_of_connected_components)
 print('Number of connected components with more than one node: ', len(filtered_connected_components))
+print('Percentage of nodes in the largest connected component: ', \
+      len(max(filtered_connected_components, key=len)) / number_of_nodes)
 
 # Computing the length of all the connected components
 
@@ -134,7 +136,6 @@ cc = C.subgraph(largest_cc).copy() #ATTENTO QUI STO FACENDO UNA COPIA
 
 print('Computing the degree sequence...')
 degree_sequence = sorted((d for n, d in C.degree()), reverse=True)
-
 
 print('Saving the results...')
 np.save('./results/degree_sequence.npy', degree_sequence)
@@ -268,6 +269,7 @@ from collections import defaultdict
 # Supponendo che 'partition' sia il risultato di community.best_partition(cc)
 partition = community.best_partition(cc, weight='weight')
 
+
 # Creare un dizionario di liste dove le chiavi sono gli identificatori delle comunità
 community_lists = defaultdict(list)
 
@@ -284,6 +286,8 @@ list_of_communities.sort(key=len, reverse=True)
 
 main_community = list_of_communities[0]
 
+print('Length of the communities: ', [len(community) for community in list_of_communities])
+print('Percentage of nodes in the main community: ', len(main_community) / number_of_nodes)
 # Estrai il sottografo corrispondente alla main community
 main_community_subgraph = cc.subgraph(main_community).copy()
 
