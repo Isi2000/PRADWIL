@@ -26,24 +26,33 @@ cc = C.subgraph(largest_cc).copy()
 borda = np.load("./results/borda.npy")
 borda = [[author, int(position)] for author, position in borda]
 
+impo_authors = [author[0] for author in borda[:20]]
+print(impo_authors)
 author_positions = {author: position for position, (author, _) in enumerate(borda, start=1)}
+
 min_position = min(author_positions.values())
 max_position = max(author_positions.values())
 
-colormap = plt.cm.get_cmap("RdPu")
+colormap = plt.cm.get_cmap("Reds")
+colormap1 = plt.cm.get_cmap("Blues")
 
-default_node_size = 1
+default_node_size = 0.01
 
 node_sizes = {}
 node_colors = {}
 
+
 # Assign sizes and colors for authors in sub_borda
 for author, position in author_positions.items():
-    norm_pos = (position - min_position) / (max_position - min_position)
-    norm_pos = 1-norm_pos
-    c = colormap(norm_pos)
-    node_colors[author] = c
-    node_sizes[author] = default_node_size + norm_pos*2
+    if author in impo_authors:
+        norm_pos = (position - min_position) / (max_position - min_position)
+        norm_pos = 1-norm_pos
+        c = colormap(norm_pos)
+        node_colors[author] = c
+        node_sizes[author] = default_node_size + norm_pos*10
+    else:
+        node_colors[author] = colormap1(norm_pos)
+        node_sizes[author] = default_node_size
 
 
 nodes_color_list = []
@@ -52,14 +61,41 @@ for i in cc.nodes():
     nodes_color_list.append(node_colors[i])
     nodes_color_size.append(node_sizes[i])
 
+    
+edge_colors = {}
+edge_widths = {}
+edge_alpha = {}
+# Iterate through edges and assign colors, widths, and alpha based on the colors of their associated authors
+for edge in cc.edges():
+    author, author1 = edge
+    position = min(author_positions[author], author_positions[author1])
+ 
+    c_author = list(author_positions.keys())[list(author_positions.values()).index(position)]
+    
+    norm_pos = (position - min_position) / (max_position - min_position)
+    norm_pos = 1-norm_pos
+    edge_colors[edge] = node_colors[c_author]
+    edge_widths[edge] = norm_pos  * 0.01 
+    edge_alpha[edge] = 1.0-norm_pos  
+edge_colors_list = []
+edge_widths_list = []
+edge_alpha_list = []
+
+for i in cc.edges():
+    edge_colors_list.append(edge_colors[i])
+    edge_widths_list.append(edge_widths[i])
+    edge_alpha_list.append(edge_alpha[i])
+
+
+print("done")
 #Loading positions
 with open('positions.pkl', 'rb') as file:
     pos = pickle.load(file)
 
-pos = nx.kamada_kawai_layout(cc, pos = pos)
-labels = {auth: auth for auth, _ in borda[0:5]}
+pos = nx.spring_layout(cc, k = 0.2)
+labels = {auth: auth for auth, _ in borda[0:0]}
 #plt.figure(figsize=(8,8))
 # Draw the bipartite graph
-nx.draw_networkx(cc, pos, node_color=nodes_color_list, node_size=nodes_color_size, labels =labels, font_size= 8) #width = edge_widths_list, edge_color = edge_colors_list)
+nx.draw_networkx(cc, pos, node_color=nodes_color_list, node_size=nodes_color_size, labels =labels, font_size= 8, width = edge_widths_list, edge_color = edge_colors_list)
 
 plt.show()
