@@ -26,15 +26,15 @@ cc = C.subgraph(largest_cc).copy()
 borda = np.load("./results/borda.npy")
 borda = [[author, int(position)] for author, position in borda]
 
-impo_authors = [author[0] for author in borda[:20]]
+impo_authors = [author[0] for author in borda[:10]]
 print(impo_authors)
 author_positions = {author: position for position, (author, _) in enumerate(borda, start=1)}
 
 min_position = min(author_positions.values())
 max_position = max(author_positions.values())
 
-colormap = plt.cm.get_cmap("Reds")
-colormap1 = plt.cm.get_cmap("Blues")
+colormap = plt.cm.get_cmap("coolwarm")
+#colormap1 = plt.cm.get_cmap("Blues")
 
 default_node_size = 0.01
 
@@ -44,14 +44,14 @@ node_colors = {}
 
 # Assign sizes and colors for authors in sub_borda
 for author, position in author_positions.items():
+    norm_pos = (position - min_position) / (max_position - min_position)
+    norm_pos = 1-norm_pos
+
     if author in impo_authors:
-        norm_pos = (position - min_position) / (max_position - min_position)
-        norm_pos = 1-norm_pos
-        c = colormap(norm_pos)
-        node_colors[author] = c
-        node_sizes[author] = default_node_size + norm_pos*10
+        node_colors[author] = colormap(norm_pos)
+        node_sizes[author] = default_node_size + norm_pos*300
     else:
-        node_colors[author] = colormap1(norm_pos)
+        node_colors[author] = colormap(norm_pos)
         node_sizes[author] = default_node_size
 
 
@@ -93,9 +93,9 @@ with open('positions.pkl', 'rb') as file:
     pos = pickle.load(file)
 
 pos = nx.spring_layout(cc, k = 0.2)
-labels = {auth: auth for auth, _ in borda[0:0]}
+labels = {auth: auth for auth, _ in borda[0:10]}
 #plt.figure(figsize=(8,8))
 # Draw the bipartite graph
-nx.draw_networkx(cc, pos, node_color=nodes_color_list, node_size=nodes_color_size, labels =labels, font_size= 8, width = edge_widths_list, edge_color = edge_colors_list)
+nx.draw_networkx(cc, pos, node_color=nodes_color_list, node_size=nodes_color_size, labels =labels, font_size= 8, width = edge_widths_list, edge_color = edge_colors_list, font_color = 'yellow')
 
 plt.show()
