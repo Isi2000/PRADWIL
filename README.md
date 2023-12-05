@@ -1,15 +1,31 @@
 # PRADWIL
 
-# Social network analysis of Prader Willi Syndrome research collaboration network
+# Analysis of the Prader-Willi Syndrome Research Collaboration Network
 
 ## Abstract
+
+The goal of this paper is to analyze the Prader-Willi syndrome (PWS) research community, through the lens of graph theory and social network analysis.
+The project focuses on the analysis of the co-authorship 
+network within the scientific community dedicated to PWD research.
+
+For this purpose, we collected a dataset containing all the published research on the PWS from the National Center for Biotechnology Information's PubMed database. 
+We conducted a preliminary analysis of the dataset to study the evolution of the number of publications, the number of authors and the number of authors per paper over time.
+Then, we constructed the aforementioned co-authorship network
+and we characterized its structure by computing the main network metrics and by studying its scale free property.
+We also identified the most influential authors in the largest connected component of the network by measuring centrality metrics, and we provided a final ranking using the Borda count method. Finally, we performed community detection on the largest connected component of the network using the Louvain algorithm.
+
 ## Introduction
 
-Prader-Willi syndrome (PWS) is a genetic disorder recognized as the most common genetic cause of life-threatening childhood obesity. According to the Foundation for Prader-Willi syndrome Research (citation), PWS occurs in approximately one out of every 15,000 births. It affects males and females with equal frequency and affects all races and ethnicities. Research findings serve as the foundation for advocacy efforts. Building awareness about PWS within the medical community, among policymakers, and in the general public is essential for garnering support and resources to advance research initiatives. Collaborative research on a global scale among researchers, healthcare professionals, accelerate the pace of discovery, leading to more comprehensive insights and innovative solutions.
+Prader-Willi syndrome (PWS) is a genetic disorder and is recognized as the most common genetic cause of life-threatening childhood obesity.
+According to the Foundation for Prader-Willi syndrome Research[^1], PWS occurs in approximately one out of every 15,000 births. It affects males and females with equal frequency and affects all races and ethnicities. 
+Research findings serve as the foundation for advocacy efforts. It is crucial to raise awareness about PWS within the medical community, among policymakers, and in the general public. This is essential for garnering support and resources to advance research initiatives. Collaborative research on a global scale, involving researchers and healthcare professionals, can accelerate the pace of discovery, leading to more comprehensive insights and innovative solutions.
 
-Graph theory, and particularly social network analysis, are crucial tools for evaluating the quality and effectiveness of research in this field. In our project, we utilized tools developed in graph theory to systematically analyze the structure of the Prader Willi Syndrome research collaboration network.
+Graph theory, and particularly social network analysis, are crucial tools for evaluating the quality and effectiveness of research on Prader-Willi Syndrome.
+In our project, we utilized tools developed in graph theory to systematically analyze the structure of the Prader Willi Syndrome research collaboration network.
 
-Starting from the bipartite network of authors and ids we construct the the co-authorship network from its projection. Then we find the connected component and analyze the largest one by looking at density, clustering coefficient and average shortest path. In this subgraph we find the most important nodes ranking them using degree centrality, betweenness centrality, eigenvector centrality and closeness centrality to compute a Borda score. Lastly we use the Louvain algorithm to perform community detection.
+The paper is organized as follows: 
+in the Materials and Methods section, we provides details on data acquisition, computational tools and Python libraries employed in the analysis. Additionally, we describe the methods used for the characterization of the co-authorship network, the analysis of the scale free property of the network, the identification of the most influential nodes and the Louvain algorithm for community detection; in the Results section, we present and discuss the results of the analysis.
+Finally, we reported our conclusions in the last section.
 
 ## Materials and Methods
 
@@ -420,16 +436,16 @@ In the following table, we show the top 10 authors according to each metric and 
 
 | Degree centrality | Betweenness centrality | Closeness centrality | Eigenvector centrality | Borda score |
 | --- | --- | --- | --- | --- |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| Butler Merlin G | Tauber Maithé | Poitou Christine | Grugni Graziano | Poitou Christine |
+| Grugni Graziano | Muscatelli F | Coupaye Muriel | Crinò Antonino | Grugni Graziano |
+| Crinò Antonino | Molinas Catherine | Tauber Maithé | Sartorio Alessandro | Crinò Antonino |
+| Miller Jennifer L | Lalande M | Goldstone Anthony P | Butler Merlin G | Butler Merlin G |
+| Tauber Maithé | Poitou Christine | Grugni Graziano | Poitou Christine | Miller Jennifer L |
+| Poitou Christine | Goldstone Anthony P | Crinò Antonino | Pellikaan Karlijn | Goldstone Anthony P |
+| Driscoll Daniel J | Butler Merlin G | Pellikaan Karlijn | Coupaye Muriel | Coupaye Muriel |
+| Horsthemke B | Miller Jennifer L | Molinas Catherine | Miller Jennifer L | Driscoll Daniel J |
+| Nicholls R D | Nicholls R D | Caixàs Assumpta | Caixàs Assumpta | Tauber Maithé |
+| Haqq Andrea M | Horsthemke B | Sartorio Alessandro | Rosenberg Anna G W | Caixàs Assumpta |
 
 ### Community detection and Louvain algorithm
 
@@ -444,3 +460,7 @@ The modularity of the final partition is about $Q = 0.904$.
 ## Discussion
 
 ## Conclusion
+
+## References
+
+[^1] : Foundation for Prader-Willi Syndrome Research. What is Prader-Willi Syndrome? [Link](https://www.fpwr.org/what-is-prader-willi-syndrome#definition) (Accessed: December 5, 2023)
