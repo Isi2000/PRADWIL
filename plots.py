@@ -108,6 +108,41 @@ plt.savefig('./images/cumulative_degree_distribution.png')
 n_tail = np.sum(degree_sequence >= xmin)
 n = len(degree_sequence)
 head_data = degree_sequence[degree_sequence < xmin]
+p_tail = n_tail/n
+
+def generate_dataset(n, p_tail, head_data):
+    """
+    This function generates a dataset of length n that follows the same distribution of the original dataset.
+
+    Parameters
+    ----------
+    n : int
+        Length of the dataset to generate.
+    p_tail : float
+        Probability of generating an element from the tail of the distribution.
+    head_data : numpy.ndarray
+        Head of the original dataset: elements with x < xmin.
+
+    Returns
+    -------
+    list
+        A list of length n that follows the same distribution of the original dataset.
+    """
+    generated_dataset = []
+    for _ in range(n):
+        # Genera un numero casuale tra 0 e 1
+        p = np.random.rand()
+
+        if p < p_tail:
+            # Genera un elemento dalla power law con x > xmin
+            generated_value = fit_function.power_law.generate_random(1, estimate_discrete=True)
+        else:
+            # Pesca un elemento dalla testa del dataset originale con x < xmin
+            generated_value = np.random.choice(head_data, 1)
+            
+        generated_dataset.append(generated_value)
+    generated_dataset = np.array(generated_dataset).flatten()
+    return generated_dataset
 
 # Number of datasets to generate
 num_datasets = 2500
@@ -115,15 +150,11 @@ num_datasets = 2500
 # List to store the D values
 D_values = []
 
-# Generate datasets with specified probability distribution
-for _ in tqdm(range(num_datasets), desc="Generating datasets", unit="dataset"):
-    generated_data_tail = fit_function.power_law.generate_random(n_tail, estimate_discrete=True)
-    generated_data_head = np.random.choice(head_data, n - n_tail)
-    generated_data = np.concatenate((generated_data_tail, generated_data_head))
-    generated_data_fit = powerlaw.Fit(generated_data, discrete=True)
-    D_value = generated_data_fit.power_law.D
-    #x_min = generated_data_fit.power_law.xmin
-    D_values.append(D_value)
+# Generate the datasets and calculate the D values
+for _ in tqdm(range(num_datasets)):
+    generated_dataset = generate_dataset(n, p_tail, head_data)
+    fit_function = powerlaw.Fit(generated_dataset, discrete=True)
+    D_values.append(fit_function.power_law.D)
 
 # Calculate the p-value
 

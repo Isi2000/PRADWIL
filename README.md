@@ -3,29 +3,27 @@
 # Social network analysis of Prader Willi Syndrome research collaboration network
 
 ## Abstract
-
 ## Introduction
 
-- Qui io scriverei due righe sulla malattia e il perché abbiamo scelto di analizzare questo grafo
+Prader-Willi syndrome (PWS) is a genetic disorder recognized as the most common genetic cause of life-threatening childhood obesity.
+According to the Foundation for Prader-Willi syndrome Research (citation), PWS occurs in approximately one out of every 15,000 births . It affects males and females with equal frequency and affects all races and ethnicities.
+Research findings serve as the foundation for advocacy efforts. Building awareness about PWS within the medical community, among policymakers, and in the general public is essential for garnering support and resources to advance research initiatives. Collaborative research on a global scale  among researchers, healthcare professionals, accelerate the pace of discovery, leading to more comprehensive insights and innovative solutions. 
 
 Graph theory, and particularly social network analysis, are crucial tools for evaluating the quality and effectiveness of research in this field. In our project, we utilized tools developed in graph theory to systematically analyze the structure of the Prader Willi Syndrome research collaboration network. 
-Furthermore we used the Louvain algorithm for performing a community detection.
 
-(Qui io ripercorrerei velocemente quello che abbiamo fatto e scriverei come abbiamo strutturato il resto della relazione).
+Starting from the bipartite network of authors and ids we construct the the co-authorship network from its projection. Then we find the connected component and analyze the largest one by looking at density, clustering coefficient and average shortest path. In this subgraph we find the most important nodes ranking them using degree centrality, betweenness centrality, eigenvector centrality and closeness centrality to compute a Borda score. Lastly we use the Louvain algorithm to perform community detection.
 
-## Materials and Methods 
+## Materials and Methods
 
-### Dataset
 
-- Qui dobbiamo scrivere da dove vengono i dati
-- Scriverei soprattutto come abbiamo fatto ad assegnare a ciascun autore un campo di ricerca
+
 
 ### Construction of the authors collaboration network
 
 We start by constructing the author-paper bipartite network $ G = (U, V, E)$, where the disjoint and independent sets of nodes $U$ and $V$ represent authors and papers, while the links between them denote the authorship relation. 
 Subsequently, we derive the coauthorship collaboration network from the original bipartite network by projecting it onto the set of author nodes. 
 
-Ih this new graph, denoted as $G' = (V, E)$, each author is represented by a vertex $v_i$, while the existence of an edge between two different authors means that there exists at least one path between them in the original bipartite graph $G'$, indicating a shared paper.
+In this new graph, denoted as $G' = (V, E)$, each author is represented by a vertex $v_i$, while the existence of an edge between two different authors means that there exists at least one path between them in the original bipartite graph $G'$, indicating a shared paper.
 
 We decided to employ a weighted projection of $G$ to obtain $G'$. The weight of each edge corresponds to the number of common nodes in the original bipartite graph $G$, reflecting the number of papers authors have published together. 
 
@@ -34,9 +32,7 @@ This network structure aligns with the concept that frequent collaborators shoul
 ...
 (Qui dobbiamo scrivere anche che abbiamo tolto dal grafo i nodi isolati e forse anche il fatto che usiamo il reciproco dei pesi quando calcoliamo grandezze che usano il percorso più corto tra due nodi.)
 
-### Small world-ness and scale free property
-
-#### The scale free property 
+### The scale free property (small worldness ??)
 
 One of the notable models for complex networks is the **scale-free network**, characterized by a degree distribution that follows a heavy-tailed power law. 
 This implies an abundance of nodes with degrees significantly higher than the average, and this property is associated with the network's **robustness**. 
@@ -51,22 +47,17 @@ p(d) \propto d^{-\alpha}
 $$
 
 Here, \( \alpha \) is a constant parameter, typically \( 2 < \alpha < 3 \). 
-In our context, \( d \) represents the degrees of nodes, and \( p(d) \) represents the probability degree distribution of the network, 
-normalized to one. 
+In our context, \( d \) represents the degrees of nodes, and \( p(d) \) represents the probability degree distribution of the network, normalized to one. 
 In most cases, the power law model is applicable only on the tail of the empirical distribution, 
 meaning for degrees greater than a minimum d_{\text{min}}. 
 The fitting function will be characherized by an estimated scaling parameter $\hat{\alpha}$ and the lower 
 bound $d_{\text{min}}$ .
-Then we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit, which is interpreted as a "distance"
-between the empirical distribution and the fitted power law.
+Then we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit, which is interpreted as a "distance" between the empirical distribution and the fitted power law.
 
 Then, in order to assess the goodness of the fit, we use the following procedure:
 
-2. We generate a substantial number of synthetic datasets mimic the distribution of the empirical data below \(d_{\text{min}}\) 
-while following the fitted power law above \(d_{\text{min}}\). 
-In particular, we generate from the fitted power law a number of synthetic datasets equal to the number of elements in the 
-original dataset which have degree greater than \(d_{\text{min}}\); while for the remaining elements we sample uniformly at random
-from the observed data set that have degree less than \(d_{\text{min}}\).
+2. We generate a substantial number of synthetic datasets mimic the distribution of the empirical data below \(d_{\text{min}}\)  while following the fitted power law above \(d_{\text{min}}\). 
+In particular, we generate from the fitted power law a number of synthetic datasets equal to the number of elements in the original dataset which have degree greater than \(d_{\text{min}}\); while for the remaining elements we sample uniformly at random from the observed data set that have degree less than \(d_{\text{min}}\).
 
 3. We individually fit each synthetic dataset to its own power-law model and calculate the KS statistic for each 
 one relative to its own model.
@@ -81,35 +72,78 @@ statistical fluctuations. Conversely, if the *p-value* is smaller than a specifi
 the model does not provide a plausible fit for the data, and the hypothesis is rejected.
 To achieve accuracy to about two decimal places, we generate \(2500\) synthetic sets. 
 
-##### Scale free property results
-
-The results of the analysis are summarized in the following table:
-
-| Parameter | Value |
-| --- | --- |
-| $\hat{\alpha}$ |  |
-| $d_{\text{min}}$ |  |
-| $D$ |  |
-
-The plot of the empirical degree distribution and the fitted power law is shown in the figure below:
-
-![Degree distribution](./images/degree_distribution.png)
-
-Instead, the plot of the cumulative distribution function (CDF) of the empirical data and the fitted power 
-law is shown in the figure below:
-
-![CDF](./images/cumulative_degree_distribution.png)
-
+We performed the degree distribution analysis on the coauthorship collaboration network using the powerlaw package for Python.
 
 ### Characteristic of the authors collaboration network
 
-### Smallworldness property
+In order to characterize the structure of the coauthorship collaboration network, we tested the connectedness of the graph and we look for the different connected components.
+We found that the graph is not connected, and it is composed of 1442 connected components. 
+We filtered out the components with one single node, and we found that the largest connected component contains
+9289 nodes, which is about 56% of the total number of nodes in graph.
+We then analyzed the largest connected component by computing the following network metrics:
 
-- Questo mi sembra infattibile ma non ci ho speso troppo tempo... Non so, magari vediamo se abbiamo tempo da
-perderci alla fine. 
+- Density: 
+The density of a graph is defined as the ratio between the number of edges in the graph and the maximum number of edges in a graph with the same number of nodes:
 
+$$
+D = \frac{2m}{n(n-1)}
+$$
 
-### Indentification of the most influential nodes
+where $m$ is the number of edges in the graph and $n$ is the number of nodes in the graph.
+The value of the density ranges from 0 to 1, and it is equal to 1 for a complete graph (a graph in which each node is connected to all other nodes), and it is equal to 0 for a graph without edges.
+
+- Average clustering coefficient (weighted and unweighted):
+
+The local clustering coefficient in an undirected and unweighted graph for a node $i$ is defined as the fraction of potential triangles involving that node that actually exist in the graph:
+
+$$
+C_i = \frac{2t_i}{k_i(k_i-1)}
+$$
+
+where $t_i$ is the number of triangles through node $i$ and $k_i$ is the degree of node $i$.
+The average clustering coefficient of a graph is the average of the local clustering coefficients of all the nodes in the graph:
+
+$$
+C = \frac{1}{n} \sum_{i=1}^n C_i
+$$
+
+On the other hand, there are several way for defining the local clustering coefficient in a weighted graph.
+In our project, we used the geometric average of the subgraph edge weights:
+
+$$
+c_u = \frac{1}{k_u(k_u-1)} \sum_{i,j \in N(u)} \sqrt{w_{ij} w_{iu} w_{ju}}
+$$
+
+where $N(u)$ is the set of neighbors of $u$ and $w_{ij}$ is the weight of the edge between $i$ and $j$.
+The average clustering coefficient of a weighted graph is the average of the local clustering coefficients of all the nodes in the graph:
+
+$$
+C = \frac{1}{n} \sum_{i=1}^n c_i
+$$
+
+The clustering coefficient is a measure of the degree to which nodes in a graph tend to cluster together.
+A high clustering coefficient indicates that many nodes in the graph tend to cluster together, while a low clustering coefficient indicates that nodes tend to be more isolated.
+In our context, we measured the clustering coefficient of the largest connected component of the coauthorship 
+collaboration network for both the weighted and unweighted case.
+
+- Average shortest path
+
+The average shortest path of the collaboration network is the average number of steps along the shortest paths for all possible pairs of network nodes. 
+The mathematical expression for the average shortest path in the unweighted case is:
+
+$$
+L = \frac{1}{n(n-1)} \sum_{i \neq j} d(v_i, v_j)
+$$
+
+where $d(v_i, v_j)$ is the shortest path between the nodes $v_i$ and $v_j$.
+
+For defining the shortest path in a weighted graph, we need to take into account the fact that in a weighted graph, the shortest path between two nodes is the path with the lowest sum of edge weights, since the weights are interpreted as distances or costs.
+However, in our context, an higher weight between two nodes indicates a stronger collaboration between the two authors, so that, when computing the shortest path of the weighted graph, we need to take into account the fact that the shortest path between two nodes is the path with the highest sum of edge weights.
+The new weight scheme is therefore defined as the reciprocal of the original weights.
+
+The average shortest path is a measure of the efficiency of information exchange in a network.
+
+### Identification of the most influential nodes
 
 The identification of the most influential nodes in a network is a fundamental task in network analysis, 
 since it allows to identify the nodes that are most important for the structure and the functioning of the network.
@@ -118,7 +152,7 @@ capturing a different aspect of the node's importance.
 In this section, we will describe some of the most common metrics for node importance evaluation,
 and we will use them to identify the most influential authors in the Alzheimer's disease collaboration network.
 
-#### Degree centrality
+- Degree centrality
 
 The degree centrality quantifies the importance of a node in a network by computing the degree of each node (
 i.e. the number of links that the node has with other nodes in the network),
@@ -133,9 +167,7 @@ where $k_v$ is the degree of the node $v$ and $n$ is the number of nodes in the 
 The degree centrality assigns a higher score to the nodes with a higher degree, meaning that the nodes with
 more links are considered more important.
 
-QUI MI è VENUTO UN DUBBIO: DOBBIAMO CONSIDERARE IL FATTO CHE IN NOSTRO GRAFO è PESATO??
-
-#### Betweenness Centrality
+- Betweenness Centrality
 
 Betweenness centrality is a measure that assesses the importance of a node in a network by calculating the 
 number of shortest paths passing through that node for all pairs of nodes in the network. 
@@ -161,7 +193,7 @@ by taking the reciprocal of the weights.
 This adjustment ensures that the algorithms correctly identify paths with the highest collaborative significance, 
 aligning with the notion that heavier weights represent stronger connections between authors.
 
-#### Closeness centrality
+- Closeness centrality
 
 The closeness centrality is defined as the inverse of the average distance between a node and all other nodes.
 For each node $v$ in the network, the closeness centrality is computed by calculating the average of the distances 
@@ -184,7 +216,7 @@ Similar to the considerations for betweenness centrality, the computation of sho
 necessitates the adjustment of weights. 
 Also in this case, we take the reciprocal of the weights to properly account for the weighted nature of the graph. 
 
-#### Eigenvector centrality
+- Eigenvector centrality
 
 The eigenvector centrality measures the importance of a node in a network by considering the importance of 
 its neighbors, providing a recursive definition of node importance.
@@ -213,7 +245,7 @@ This iterative technique starts with a random vector and repeatedly multiplies i
 of the network until the vector converges to the eigenvector associated with the largest eigenvalue of the 
 adjacency matrix. At each iteration, the vector is normalized to prevent it from growing indefinitely.
 
-#### Final ranking with borda count
+- Final ranking with Borda count
 
 After the evalution of the importance of each node in the network using the four metrics described above,
 we combined the results of the four metrics to obtain a final ranking of the most influential authors in the
@@ -284,14 +316,42 @@ The two phases are repeated iteratively until a maximum of modularity is reached
 The Louvain algorithm is an agglomerative and hierarchical method, meaning that it starts from the nodes
 and builds the communities from the bottom up.
 
-#### Community detection results
+## Results 
+
+### The coauthorship collaboration network
+
+### The scale free property
+
+Firstly, we estimate the scaling parameter $\hat{\alpha}$ and the lower bound $d_{\text{min}}$ of the fitted power law and we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit.
+The results are summarized in the following table:
+
+| Parameter | Value |
+| --- | --- |
+| $\hat{\alpha}$ |  |
+| $d_{\text{min}}$ |  |
+| $D$ |  |
+
+The plot of the empirical degree distribution and the cumulative degree distribution are shown in the following figures:
+
+![Degree distribution](./images/degree_distribution.png)
+
+![CDF](./images/cumulative_degree_distribution.png)
+
+After that, we estimate the *p-value* of the goodness of the fit, which is found to be equal to $p = $.
+Since this value is greater than the threshold $0.1$, we can conclude that the scale-free model provides a plausible
+fit for the data.
+However, 
 
 
+### Characteristic of the authors collaboration network
 
+### Identification of the most influential nodes
 
-## Results
+### Community detection and Louvain algorithm
 
-Per ora i risultati li ho messi nella sezione Materials and Methods, ma poi li sposterò qui.
+We performed the community detection using the Louvain algorithm, and we found that the network is partitioned
+into ... different communities reaching a modularity of $Q = $.
+
 
 ## Discussion
 

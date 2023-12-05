@@ -9,40 +9,11 @@ from tqdm import tqdm
 import numpy as np
 import analysis_functions as af
 
+from collections import defaultdict
+
 # Read the data-------------------------------------------------------------
 
-df = pd.read_json("data.json")
-
-# Pre analysis of the data-------------------------------------------------
-
-df['Year'] = df['Date'].apply(af.convert_year)
-
-df = af.add_year_interval(df, interval_length = 5)
-
-# Computing the number of articles and authors per year interval
-print('Computing the number of articles and authors per year interval...')
-
-num_articles_per_interval = df['YearInterval'].value_counts().sort_index()
-
-df['NumAuthors'] = df['Authors'].apply(af.count_authors)
-num_authors_per_interval = df.groupby('YearInterval')['NumAuthors'].sum().sort_index()
-
-result_df = pd.DataFrame({
-    'YearInterval': num_articles_per_interval.index,
-    'NumArticles': num_articles_per_interval.values,
-    'NumAuthors': num_authors_per_interval.values
-})
-
-# Computing the average number of authors per article
-result_df['AvgAuthorsPerArticle'] = result_df['NumAuthors'] / result_df['NumArticles']
-
-# Saving the results in a JSON file
-
-os.makedirs('./results', exist_ok=True)
-
-print('Saving the results...')
-result_df.to_json('./results/num_paper_authors.json', orient='records', lines=True, index = True)
-print('Results saved!')
+df = pd.read_json("./data/data.json")
 
 #Building the bipartite graph------------------------------------------------
 
@@ -53,36 +24,12 @@ G = af.create_bipartite_graph(df)
 print('Done!')
 
 number_of_authors_nodes = len([node for node in G.nodes if G.nodes[node]['bipartite'] == 1])
-# Non ho proprio idea del perchè mi dia un numero di paper diverso da quello che mi aspetto:
-# più basso.
-# Tocca controllare sta cosa quando si avranno i dati veri. 
-# - > Mi è venuto in mente potrebbero essere le parti non connesse del grafo.
 number_of_papers_nodes = len([node for node in G.nodes if G.nodes[node]['bipartite'] == 0])
 total_number_of_nodes = number_of_authors_nodes + number_of_papers_nodes
 
 print('Number of authors nodes:', number_of_authors_nodes)
 print('Number of papers nodes:', number_of_papers_nodes)
 print('Total number of nodes:', total_number_of_nodes)
-
-# Visualizing the bipartite graph--------------------------------------------
-# Secondo me ci conviene riportare in relazione solo una percentuale del vero 
-# grafo, perchè altrimenti non si vede niente.
-
-# bipartite layout
-authors_nodes = {n for n, d in G.nodes(data=True) if d["bipartite"] == 1}
-authors_nodes_subset = set(random.sample(authors_nodes, 50))
-authors_nodes_subset_subgraph = G.subgraph(authors_nodes_subset).copy()
-
-pos = nx.bipartite_layout(G, nodes= authors_nodes_subset)
-
-node_size = [deg for _, deg in authors_nodes_subset_subgraph.degree()]
-edge_width = 0.1
-
-nx.draw(G, pos, nodelist=authors_nodes_subset, with_labels=False,
-        node_color='skyblue', node_size=node_size, width=edge_width)
-plt.show()
-
-# Poi dobbiamo salvare l'immagine
 
 # Coauthorship graph---------------------------------------------------------
 
@@ -94,6 +41,7 @@ authors_nodes = set(G) - article_nodes
 C = bipartite.weighted_projected_graph(G, authors_nodes) #weighted projection
 
 print('Done!')
+
 # Analysing the coauthorship graph-------------------------------------------
 
 number_of_nodes = C.number_of_nodes()
@@ -141,12 +89,6 @@ print('Saving the results...')
 np.save('./results/degree_sequence.npy', degree_sequence)
 print('Degree sequence saved!')
 
-# Smallworldness property----------------------------------------------------
-# Questa parte la lascio commentata perchè ci mette troppo tempo.
-# In più non è nemmeno completa.
-
-#sigma = nx.sigma(cc, niter=10, nrand=10)
-#print('Smallworldness property:', sigma)
 
 #-----------------------------------------------------------------------------
 # Characterizing the network
@@ -162,46 +104,9 @@ print('Clustering coefficient (unweighted):', cluster_coeff_unweighted)
 #avg_shortest_path_unweighted = nx.average_shortest_path_length(cc)
 #print('Average shortest path (unweighted):', avg_shortest_path_unweighted)
 
-#Plotting the collaboration network-------------------------------------------
-
-"""
-with tqdm(total=100, desc="Plotting", position=0, leave=True) as pbar:
-    def update_progress(*args, **kwargs):
-        pbar.update(1)
-
-    # Aggiorna la funzione di progresso di Matplotlib
-    plt.show = update_progress
-
-    # Plot del grafo di collaborazione
-    pos = nx.spring_layout(cc)
-    nx.draw(cc, pos, node_size=0.1, with_labels=False)
-
-    # Chiudi la barra di avanzamento alla fine
-    pbar.close()
-
-plt.show()
-"""
-
-# Adding attributes to the nodes---------------------------------------------
-
-# Adding the field of research attribute just for testing purposes
-for node in G.nodes:
-    field_of_research_value = random.randint(1, 100)
-    G.nodes[node]['campo_di_ricerca'] = field_of_research_value
-
-# Characterizing the network with Social Network metrics
-
-field_of_research_assortativity = nx.attribute_assortativity_coefficient(G, 'campo_di_ricerca')
-print('Field of research assortativity:', field_of_research_assortativity)
-
-mixing_matrix = nx.attribute_mixing_matrix(G, 'campo_di_ricerca')
-print('Mixing matrix:', mixing_matrix)
-plt.pcolor( mixing_matrix, cmap = 'hsv' )
-plt.show()
 
 #----------------------------------------------------------------------------
 # Identification of the most influential nodes
-"""
 
 # 1. Degree centrality
 
@@ -259,12 +164,10 @@ Borda_score_sum_sorted = sorted(Borda_score_sum.items(), key = lambda x: x[1], r
 print('Ranking of authors by Borda score:----------------------------------------------------------')
 for influential_author in Borda_score_sum_sorted[:10]:
     print('Author: ', influential_author[0], 'Borda score: ', influential_author[1])
-"""
+
 # Louvain communities---------------------------------------------------------
 
 partition = community.best_partition(cc, weight='weight')
-
-from collections import defaultdict
 
 # Supponendo che 'partition' sia il risultato di community.best_partition(cc)
 partition = community.best_partition(cc, weight='weight')
@@ -356,10 +259,6 @@ induced_graph = community.induced_graph(partition, cc)
 nx.draw(induced_graph, node_size=50, with_labels=False)
 plt.show()
 
-# Testing if there is a correlation between communities and field of research---
-# Build the contingency table
-
-print('Computing the contingency table...')
 
 
 
