@@ -100,7 +100,7 @@ cc = C.subgraph(largest_cc).copy() #ATTENTO QUI STO FACENDO UNA COPIA
 # Acquiring degree sequence--------------------------------------------------
 
 print('Computing the degree sequence...')
-degree_sequence = sorted((d for n, d in C.degree()), reverse=True)
+degree_sequence = sorted((d for n, d in cc.degree()), reverse=True)
 
 print('Saving the results...')
 np.save('./results/degree_sequence.npy', degree_sequence)

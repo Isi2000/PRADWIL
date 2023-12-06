@@ -168,7 +168,7 @@ Then, in order to assess the goodness of the fit, we use the following procedure
 4. Finally, the goodness of the fit is assessed through the *p-value*,  which is computed as the fraction of times the KS statistics of the syntetic datases is larger than the observed KS distance. 
 
 A large *p-value* suggests that the difference between empirical data and the model can be attributed to statistical fluctuations. Conversely, if the *p-value* is smaller than a specified threshold (in our case, $0.1$),
-the model does not provide a plausible fit for the data, and the hypothesis is rejected. To achieve accuracy to about two decimal places, we generate $2500$ synthetic sets. 
+the model does not provide a plausible fit for the data, and the hypothesis is rejected. To achieve a reliable result of the *p-value*, we generate $10000$ synthetic sets. 
 
 #### Identification of the most influential nodes
 
@@ -379,33 +379,37 @@ The low value of the density suggests that the coauthorship collaboration networ
 
 ### The scale free property
 
-Firstly, we estimate the scaling parameter $\hat{\alpha}$ and the lower bound $d_{\text{min}}$ of the fitted power law and we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit.
+We investigated the scale free property of the largest connected component of the coauthorship collaboration network by analyzing the power-law degree distribution.
+Firstly, we fitted the tail of the empirical distribution of the degree with a power-law distribution.
+We estimated the scaling parameter $\hat{\alpha}$ and the lower bound $d_{\text{min}}$ of the fitted power law and we computed the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit.
 The results are summarized in the following table:
 
 | Parameter | Value |
 | --- | --- |
-| $\hat{\alpha}$ |  |
-| $d_{\text{min}}$ |  |
-| $D$ |  |
+| $\hat{\alpha}$ | 3.5 |
+| $d_{\text{min}}$ | 69 |
+| $D$ | 0.03 |
 
-The plot of the empirical degree distribution and the cumulative degree distribution are shown in the following figures:
+The plot of the empirical degree distribution and the cumulative degree distribution with the fitted power law
+are shown in the following figures:
+(Vorrei mettere queste due figure affiancate nella relazione)
 
 ![Degree distribution](./images/degree_distribution.png)
 
 ![CDF](./images/cumulative_degree_distribution.png)
 
-After that, we estimate the *p-value* of the goodness of the fit, which is found to be equal to $p = $.
-The large *p-value* suggests that the difference between empirical data and the model can be attributed to
-statistical fluctuations, and therefore the model provides a plausible fit for the data. 
+
+The alpha value is slightly outside the typical range of 2 < alpha < 3, but it is notably close to the upper limit of 3. Additionally, given the graphs and the low D value, the power-law model seems to provide a good fit to the data. Subsequently, we continued our analysis by estimating the p-value.
+We found a very large p-value of 0.999, indicating that the difference between the empirical data and the model can be attributed to statistical fluctuations. Therefore, the model provides a plausible fit for the data.
 
 ### Identification of the most influential nodes
 
-We identified the most influential authors in the coauthorship collaboration network by compunting the degree
-centrality, the betweenness centrality, the closeness centrality and the eigenvector centrality of each node.
-These metrics are used to evaluate the importance of a node in a network by capturing different aspects of
-the node's importance, the final ranking is obtained by combining the results of the four metrics using the
+We determined the most influential authors within the largest connected component of the coauthorship collaboration network by assessing the four centrality metrics: degree centrality, betweenness centrality, closeness centrality, and eigenvector centrality for each node. 
+These metrics capture distinct aspects of a node's significance within the network.
+The final ranking was derived by combining the results of the four metrics using the
 Borda count method.
-In the following table, we show the top 10 authors according to each metric and the final ranking:
+The table below presents the top 10 authors for each metric and the top 10 most influential authors in the
+final ranking:
 
 | Degree centrality | Betweenness centrality | Closeness centrality | Eigenvector centrality | Borda score |
 | --- | --- | --- | --- | --- |
@@ -430,8 +434,6 @@ The largest community contains ... nodes, which is about ...% of the total numbe
 The modularity of the final partition is about $Q = 0.904$.
 
 
-## Discussion
-
 ## Conclusion
 
 ## References
@@ -448,4 +450,10 @@ https://doi.org/10.48550/arXiv.0706.1062)
 [^5] : Blondel, V. D., Guillaume, J.-L., Lambiotte, R., & Lefebvre, E. (2008). Fast unfolding of communities in large networks. [DOI](
 https://doi.org/10.48550/arXiv.0803.0476
 )
+
+[^6] : Newman, Mark, Networks: An Introduction, 1st edn (Oxford, 2010; online edn, Oxford Academic, 1 Sept. 2010), [DOI](https://doi.org/10.1093/acprof:oso/9780199206650.001.0001),(Accessed: December 5, 2023)
+
+[^7] : Bian, J., Xie, M., Topaloglu, U., Hudson, T., Eswaran, H., & Hogan, W. (2014). Social network analysis of biomedical research collaboration networks in a CTSA institution. Journal of Biomedical Informatics, 52, 130-140. [DOI](https://doi.org/10.1016/j.jbi.2014.01.015)
+
+[^8] : González-Alcaide, G., Park, J., Huamaní, C., Gascón, J., & Ramos, J. M. (2012). Scientific authorships and collaboration network analysis on Chagas disease: papers indexed in PubMed (1940-2009). Revista do Instituto de Medicina Tropical de São Paulo, 54(4), 219-228. [DOI](https://doi.org/10.1590/s0036-46652012000400007)
 
