@@ -23,7 +23,9 @@ print(f'sigma = {sigma}')
 print(f'D = {D}')
 
 # Plotting the degree distribution and fit
-plt.figure(figsize=(10, 7))
+plt.figure(figsize=(13, 7))
+plt.subplot(1, 2, 1)  # First subplot
+
 plt.yscale('log')
 plt.xscale('log')
 
@@ -34,18 +36,16 @@ fig = powerlaw.plot_pdf(data, color='b', linewidth=2, label='Empirical data')
 # Plotting the fit of the power law
 fit_function.power_law.plot_pdf(ax=fig, color='r', linestyle='--', label='Power law fit')
 
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.xlabel('Degree', fontsize=16)
-plt.ylabel('Probability Density', fontsize=16)
-plt.title('Degree Distribution with Power Law Fit', fontsize=18)
+#plt.xticks(fontsize=13)
+#plt.yticks(fontsize=13)
+plt.xlabel('Degree', fontsize=12, fontweight='bold')
+plt.ylabel('Probability Density', fontsize=12, fontweight='bold')
+plt.title('Degree Distribution with Power Law Fit', fontsize=14, fontweight='bold')
 plt.legend()
 
-plt.savefig('./images/degree_distribution.png')
-
 # Plotting the cumulative degree distribution and fit
+plt.subplot(1, 2, 2)  # Second subplot
 
-plt.figure(figsize=(10, 7))
 plt.yscale('log')
 plt.xscale('log')
 
@@ -56,20 +56,24 @@ fig = powerlaw.plot_cdf(data, color='b', marker='o', linewidth=2, label='Empiric
 # Plotting the fit of the power law
 fit_function.power_law.plot_cdf(ax=fig, color='r', linestyle='--', label='Power law fit')
 
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.xlabel('Degree', fontsize=16)
-plt.ylabel('Cumulative Probability', fontsize=16)
-plt.title('Cumulative Degree Distribution with Power Law Fit', fontsize=18)
+#plt.xticks(fontsize=13)
+#plt.yticks(fontsize=13)
+plt.xlabel('Degree', fontsize=12, fontweight='bold')
+plt.ylabel('Cumulative Probability', fontsize=12, fontweight='bold')
+plt.title('Cumulative Degree Distribution with Power Law Fit', fontsize=14, fontweight='bold')
 plt.legend()
 
-plt.savefig('./images/cumulative_degree_distribution.png')
+plt.tight_layout()  # Adjust layout to prevent overlap
+
+#Saving the plot
+plt.savefig('./images/degree_distribution.png', dpi=300, bbox_inches='tight')
 
 # Calculate n_tail and n
 n_tail = np.sum(degree_sequence >= xmin)
 n = len(degree_sequence)
 head_data = degree_sequence[degree_sequence < xmin]
 p_tail = n_tail/n
+
 
 def generate_dataset(n, p_tail, head_data):
     """

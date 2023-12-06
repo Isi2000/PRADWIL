@@ -392,11 +392,8 @@ The results are summarized in the following table:
 
 The plot of the empirical degree distribution and the cumulative degree distribution with the fitted power law
 are shown in the following figures:
-(Vorrei mettere queste due figure affiancate nella relazione)
 
 ![Degree distribution](./images/degree_distribution.png)
-
-![CDF](./images/cumulative_degree_distribution.png)
 
 
 The alpha value is slightly outside the typical range of 2 < alpha < 3, but it is notably close to the upper limit of 3. Additionally, given the graphs and the low D value, the power-law model seems to provide a good fit to the data. Subsequently, we continued our analysis by estimating the p-value.
