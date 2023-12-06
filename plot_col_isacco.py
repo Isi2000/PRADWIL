@@ -10,7 +10,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 ###
-df = pd.read_json("data.json")
+df = pd.read_json("./data/data.json")
 G = af.create_bipartite_graph(df)
 article_nodes = {n for n, d in G.nodes(data=True) if d["bipartite"] == 0}
 authors_nodes = set(G) - article_nodes
@@ -89,10 +89,10 @@ for i in cc.edges():
 
 print("done")
 #Loading positions
-with open('positions.pkl', 'rb') as file:
+with open('positions1.pkl', 'rb') as file:
     pos = pickle.load(file)
 
-pos = nx.spring_layout(cc, k = 0.2)
+
 labels = {auth: auth for auth, _ in borda[0:10]}
 #plt.figure(figsize=(8,8))
 # Draw the bipartite graph
