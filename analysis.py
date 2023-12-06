@@ -1,15 +1,8 @@
 import networkx as nx
-import community
 from networkx.algorithms import bipartite
-import matplotlib.pyplot as plt
 import pandas as pd
-import random
-import os
-from tqdm import tqdm
 import numpy as np
 import analysis_functions as af
-
-from collections import defaultdict
 
 # Read the data-------------------------------------------------------------
 
@@ -49,6 +42,7 @@ number_of_edges = C.number_of_edges()
 
 print('Number of nodes (authors): ', number_of_nodes)
 print('Number of edges: ', number_of_edges)
+print('Density: ', nx.density(C))
 # Testing if the graph is connected
 print('Is connected:', nx.is_connected(C))
 
@@ -99,10 +93,10 @@ cluster_coeff = nx.average_clustering(cc, weight = 'weight')
 print('Clustering coefficient:', cluster_coeff)
 cluster_coeff_unweighted = nx.average_clustering(cc)
 print('Clustering coefficient (unweighted):', cluster_coeff_unweighted)
-#avg_shortest_path = nx.average_shortest_path_length(cc, weight= lambda u, v, d: 1 / d['weight'] )
-#print('Average shortest path:', avg_shortest_path)
-#avg_shortest_path_unweighted = nx.average_shortest_path_length(cc)
-#print('Average shortest path (unweighted):', avg_shortest_path_unweighted)
+avg_shortest_path = nx.average_shortest_path_length(cc, weight= lambda u, v, d: 1 / d['weight'] )
+print('Average shortest path:', avg_shortest_path)
+avg_shortest_path_unweighted = nx.average_shortest_path_length(cc)
+print('Average shortest path (unweighted):', avg_shortest_path_unweighted)
 
 
 #----------------------------------------------------------------------------
@@ -164,100 +158,6 @@ Borda_score_sum_sorted = sorted(Borda_score_sum.items(), key = lambda x: x[1], r
 print('Ranking of authors by Borda score:----------------------------------------------------------')
 for influential_author in Borda_score_sum_sorted[:10]:
     print('Author: ', influential_author[0], 'Borda score: ', influential_author[1])
-
-# Louvain communities---------------------------------------------------------
-
-partition = community.best_partition(cc, weight='weight')
-
-# Supponendo che 'partition' sia il risultato di community.best_partition(cc)
-partition = community.best_partition(cc, weight='weight')
-
-
-# Creare un dizionario di liste dove le chiavi sono gli identificatori delle comunità
-community_lists = defaultdict(list)
-
-for node, community_id in partition.items():
-    community_lists[community_id].append(node)
-
-# Ora 'community_lists' è un dizionario in cui le chiavi sono gli identificatori delle comunità
-# e i valori sono le liste di nodi appartenenti a ciascuna comunità.
-
-# Convertire il dizionario in una lista di liste
-list_of_communities = list(community_lists.values())
-
-list_of_communities.sort(key=len, reverse=True)
-
-main_community = list_of_communities[0]
-
-print('Length of the communities: ', [len(community) for community in list_of_communities])
-print('Percentage of nodes in the main community: ', len(main_community) / number_of_nodes)
-# Estrai il sottografo corrispondente alla main community
-main_community_subgraph = cc.subgraph(main_community).copy()
-
-# Imposta il layout del grafico
-pos = nx.spring_layout(main_community_subgraph)
-
-# Estrai il peso degli archi
-edge_weights = [main_community_subgraph[u][v]['weight'] for u, v in main_community_subgraph.edges()]
-
-# Imposta la grandezza dei nodi proporzionale al loro grado
-node_size = [deg * 10 for _, deg in main_community_subgraph.degree()]
-
-# Imposta lo spessore degli archi proporzionale al loro peso
-edge_width = [weight * 2 for weight in edge_weights]
-
-# Imposta la grandezza dei label
-label_font_size = 6
-
-# Disegna il grafico
-nx.draw(main_community_subgraph, pos, with_labels=False, font_size=label_font_size,
-        node_size=node_size, width=edge_width, font_color='black', alpha=0.7)
-
-# Visualizza il grafico
-plt.show()
-
-# Generare il grafico con tutte le comunità colorate in modo diverso 
-
-pos = nx.spring_layout(cc)
-
-# Estrai il peso degli archi
-edge_weights = [cc[u][v]['weight'] for u, v in cc.edges()]
-
-# Imposta la grandezza dei nodi proporzionale al loro grado
-node_size = [deg*0.2 for _, deg in cc.degree()]
-
-# Imposta lo spessore degli archi proporzionale al loro peso
-edge_width = [weight*0.1 for weight in edge_weights]
-
-# Calcola il grado di ciascun nodo e ordina i nodi per grado in modo decrescente
-nodes_by_degree = sorted(cc.degree, key=lambda x: x[1], reverse=True)
-
-# Estrai solo i primi 10 nodi
-top_10_nodes = [node for node, _ in nodes_by_degree[:10]]
-
-# Crea un dizionario di etichette per i primi 10 nodi
-labels = {node: node for node in top_10_nodes}
-
-# Imposta la grandezza dei label
-label_font_size = 6
-
-nx.draw(cc, pos, with_labels=False, labels = labels, font_size=label_font_size,
-        node_size=node_size, width=edge_width, font_color='black', alpha=0.7,
-        node_color=list(partition.values()))
-plt.show()
-
-# Generare il dendrogramma
-dendrogram_data = community.generate_dendrogram(cc, weight='weight')
-
-for level in range(len(dendrogram_data)):
-    partition_at_level = community.partition_at_level(dendrogram_data, level)
-    print('number of communities at level', level, 'is', len(set(partition_at_level.values())))
-    print("modularity at level", level, "is",
-          community.modularity(partition_at_level, cc))
-    
-induced_graph = community.induced_graph(partition, cc)
-nx.draw(induced_graph, node_size=50, with_labels=False)
-plt.show()
 
 
 

@@ -4,15 +4,16 @@
 
 ## Abstract
 
-The goal of this paper is to analyze the Prader-Willi syndrome (PWS) research community, through the lens of graph theory and social network analysis.
-The project focuses on the analysis of the co-authorship 
+The goal of this paper is to analyze the Prader-Willi syndrome (PWS) research community, through the lens of graph theory and social network analysis. In particular, the project focuses on the analysis of the co-authorship 
 network within the scientific community dedicated to PWD research.
 
 For this purpose, we collected a dataset containing all the published research on the PWS from the National Center for Biotechnology Information's PubMed database. 
 We conducted a preliminary analysis of the dataset to study the evolution of the number of publications, the number of authors and the number of authors per paper over time.
 Then, we constructed the aforementioned co-authorship network
-and we characterized its structure by computing the main network metrics and by studying its scale free property.
-We also identified the most influential authors in the largest connected component of the network by measuring centrality metrics, and we provided a final ranking using the Borda count method. Finally, we performed community detection on the largest connected component of the network using the Louvain algorithm.
+and we characterized its structure by computing the main network metrics. 
+We also investigated the scale-free property of the network by analyzing the power-law degree distribution.
+Then, we identified the most influential authors in the largest connected component of the network by measuring centrality metrics, and we provided a final ranking using the Borda count method. 
+Finally, we performed community detection on the largest connected component of the network using the Louvain algorithm.
 
 ## Introduction
 
@@ -31,7 +32,7 @@ Finally, we reported our conclusions in the last section.
 
 ### Data acquisition
 
-All data was acquired from National Center for Biotechnology Information (NCBI), which is part of the United States National Library of Medicine (NLM), in particular from the PubMed database \cite{pubmed}. In order to download all the articles needed for the analysis we employed NCBI'S e-utilities on the UNIX command line in a bash script \cite{kans2023entrez}:
+We retrieved the data from the National Center for Biotechnology Information (NCBI), a division of the United States National Library of Medicine (NLM), specifically accessing the PubMed database[^2] . To collect the necessary articles for analysis, we utilized NCBI's e-utilities through a bash script on the UNIX command line [^3].
 
 ### Computational Tools and Python Frameworks Employed
 
@@ -45,38 +46,31 @@ All the code for data acquisition and plotting was executed on a machine with th
 | Graphics Processing Unit (GPU) | Nvidia RTX 2070 |
 | Operating System | Linux Ubuntu 20.04 |
 
-
-The computational framework leveraged the capabilities of various software tools and libraries tailored to the specific requirements of the research. 
-Notably, the following key components played a crucial role:
-
-Python Libraries:
+The computational framework utilized the capabilities of various software tools and libraries specifically chosen to meet the requirements of our research.
+ 
+Notably, the the following Python libraries were employed for the network analysis and visualization:
 
 - **NetworkX**: Utilized for the creation, manipulation, and analysis of complex networks and graph structures.
 - **Matplotlib**: Employed for data visualization, including the creation of static, interactive, and animated plots.
-These Python libraries facilitated the implementation of sophisticated graph-based algorithms and streamlined the visualization of research findings.
-
 
 ### Construction of the authors collaboration network
 
 We start by constructing the author-paper bipartite network $ G = (U, V, E)$, where the disjoint and independent sets of nodes $U$ and $V$ represent authors and papers, while the links between them denote the authorship relation. 
 Subsequently, we derive the coauthorship collaboration network from the original bipartite network by projecting it onto the set of author nodes. 
 
-In this new graph, denoted as $G' = (V, E)$, each author is represented by a vertex $v_i$, while the existence of an edge between two different authors means that there exists at least one path between them in the original bipartite graph $G'$, indicating a shared paper.
+In this new graph, denoted as $G' = (V, E)$, each author is represented by a vertex $v_i$, while the existence of an edge between two different authors means that there exists at least one path between them in the original bipartite graph $G$, indicating a shared paper.
 
 We decided to employ a weighted projection of $G$ to obtain $G'$. The weight of each edge corresponds to the number of common nodes in the original bipartite graph $G$, reflecting the number of papers authors have published together. 
 
-This network structure aligns with the concept that frequent collaborators should exhibit stronger connections in the coauthorship collaboration network compared to authors with fewer shared publications.
+This network structure aligns with the concept that frequent collaborators should exhibit stronger connections in the coauthorship network compared to authors with fewer shared publications.
 
 ### Methods for the analysis of the authors collaboration network
 #### Metrics for network characterization
 
-In order to characterize the structure of the coauthorship collaboration network, we tested the connectedness of the graph and we look for the different connected components.
-We found that the graph is not connected, and it is composed of 1442 connected components. 
-We filtered out the components with one single node, and we found that the largest connected component contains
-9289 nodes, which is about 56% of the total number of nodes in graph.
-We then analyzed the largest connected component by computing the following network metrics:
+The initial step in the analysis involves testing the connectivity of the graph and identifying its largest connected component.
+Subsequently, we compute the following network metrics for the largest connected component:
 
-- Density: 
+- **Density**: 
 The density of a graph is defined as the ratio between the number of edges in the graph and the maximum number of edges in a graph with the same number of nodes:
 
 $$
@@ -86,41 +80,39 @@ $$
 where $m$ is the number of edges in the graph and $n$ is the number of nodes in the graph.
 The value of the density ranges from 0 to 1, and it is equal to 1 for a complete graph (a graph in which each node is connected to all other nodes), and it is equal to 0 for a graph without edges.
 
-- Average clustering coefficient (weighted and unweighted):
+- **Average clustering coefficient (weighted and unweighted)**:
 
-The local clustering coefficient in an undirected and unweighted graph for a node $i$ is defined as the fraction of potential triangles involving that node that actually exist in the graph:
+The local clustering coefficient in an undirected and unweighted graph for a node $i$ is defined as the fraction of potential triangles involving that node that actually exist in the graph, meaning the probability that two neighbors of the node $i$ are connected to each other. 
+Mathematically, it is expressed as:
 
 $$
-C_i = \frac{2t_i}{k_i(k_i-1)}
+C^{unw}_i = \frac{2t_i}{k_i(k_i-1)}
 $$
 
 where $t_i$ is the number of triangles through node $i$ and $k_i$ is the degree of node $i$.
-The average clustering coefficient of a graph is the average of the local clustering coefficients of all the nodes in the graph:
+
+On the other hand, there are several way for defining the local clustering coefficient in a weighted graph.
+In our project, we employed the geometric average of the subgraph edge weights:
+
+$$
+C^{w}_u = \frac{1}{k_u(k_u-1)} \sum_{i,j} \sqrt[3]{\hat{w}_{ij} \hat{w}_{iu} \hat{w}_{ju}}
+$$
+
+where the edge weights $\hat{w}_{ij}$ are normalized by the maximum weight in the graph, and $k_u$ is the degree of the node $u$ and the value $C_u$ is set to 0 if $k_u < 2$.
+
+In both the weighted and unweighted case, the global clustering coefficient is defined as the average of the local clustering coefficients of all the nodes in the graph:
 
 $$
 C = \frac{1}{n} \sum_{i=1}^n C_i
 $$
 
-On the other hand, there are several way for defining the local clustering coefficient in a weighted graph.
-In our project, we used the geometric average of the subgraph edge weights:
+The value of the clustering coefficient ranges from 0 to 1, and
+an high value of the clustering coefficient indicates that many nodes in the graph tend to cluster together, while a low value indicates that nodes tend to be more isolated.
 
-$$
-c_u = \frac{1}{k_u(k_u-1)} \sum_{i,j \in N(u)} \sqrt{w_{ij} w_{iu} w_{ju}}
-$$
-
-where $N(u)$ is the set of neighbors of $u$ and $w_{ij}$ is the weight of the edge between $i$ and $j$.
-The average clustering coefficient of a weighted graph is the average of the local clustering coefficients of all the nodes in the graph:
-
-$$
-C = \frac{1}{n} \sum_{i=1}^n c_i
-$$
-
-The clustering coefficient is a measure of the degree to which nodes in a graph tend to cluster together.
-A high clustering coefficient indicates that many nodes in the graph tend to cluster together, while a low clustering coefficient indicates that nodes tend to be more isolated.
 In our context, we measured the clustering coefficient of the largest connected component of the coauthorship 
 collaboration network for both the weighted and unweighted case.
 
-- Average shortest path
+- **Average shortest path**
 
 The average shortest path of the collaboration network is the average number of steps along the shortest paths for all possible pairs of network nodes. 
 The mathematical expression for the average shortest path in the unweighted case is:
@@ -129,19 +121,24 @@ $$
 L = \frac{1}{n(n-1)} \sum_{i \neq j} d(v_i, v_j)
 $$
 
-where $d(v_i, v_j)$ is the shortest path between the nodes $v_i$ and $v_j$.
-
-For defining the shortest path in a weighted graph, we need to take into account the fact that in a weighted graph, the shortest path between two nodes is the path with the lowest sum of edge weights, since the weights are interpreted as distances or costs.
-However, in our context, an higher weight between two nodes indicates a stronger collaboration between the two authors, so that, when computing the shortest path of the weighted graph, we need to take into account the fact that the shortest path between two nodes is the path with the highest sum of edge weights.
-The new weight scheme is therefore defined as the reciprocal of the original weights.
-
+where $d(v_i, v_j)$ is the length of the shortest path between the nodes $v_i$ and $v_j$, and $n$ is the number of nodes in the network.
 The average shortest path is a measure of the efficiency of information exchange in a network.
+
+The previous definition can be extended to the weighted case as:
+
+$$
+L = \frac{1}{n(n-1)} \sum_{i \neq j} \frac{1}{w(v_i, v_j)}
+$$
+
+where $w(v_i, v_j)$ is the weight of the shortest path between the nodes $v_i$ and $v_j$.
+
+According to the conventional definition, edge weights are typically interpreted as distances or costs, implying that shorter paths have lower weights. However, in our context, a higher weight between two nodes indicates a stronger collaboration between the two authors. To compute the aforementioned metrics, we need to establish a new weight scheme where the weights are defined as the reciprocals of the original weights.
 
 #### The scale free property
 
 One of the notable models for complex networks is the **scale-free network**, characterized by a degree distribution that follows a heavy-tailed power law. 
 This implies an abundance of nodes with degrees significantly higher than the average, and this property is associated with the network's **robustness**. 
-To investigate this, we analyzed the power-law degree distribution of the coauthorship collaboration network using methods outlined in (*citation*).
+To investigate this, we analyzed the power-law degree distribution of the coauthorship collaboration network using methods outlined by Clauset et al., (2009).[^4]
 
 The analysis involves the following steps:
 
@@ -151,18 +148,18 @@ $$
 p(d) \propto d^{-\alpha}
 $$
 
-Here, \( \alpha \) is a constant parameter, typically \( 2 < \alpha < 3 \). 
-In our context, \( d \) represents the degrees of nodes, and \( p(d) \) represents the probability degree distribution of the network, normalized to one. 
+Here, $\alpha$ is a constant parameter, typically $2 < \alpha < 3$. 
+In our context, $ d $ represents the degrees of nodes, and $p(d)$ represents the probability degree distribution of the network, normalized to one. 
 In most cases, the power law model is applicable only on the tail of the empirical distribution, 
-meaning for degrees greater than a minimum d_{\text{min}}. 
+meaning for degrees greater than a minimum $d_{min}$. 
 The fitting function will be characherized by an estimated scaling parameter $\hat{\alpha}$ and the lower 
-bound $d_{\text{min}}$ .
-Then we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit, which is interpreted as a "distance" between the empirical distribution and the fitted power law.
+bound $d_{min}$ .
+Then, we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit, which is interpreted as a "distance" between the empirical distribution and the fitted power law.
 
 Then, in order to assess the goodness of the fit, we use the following procedure:
 
-2. We generate a substantial number of synthetic datasets mimic the distribution of the empirical data below \(d_{\text{min}}\)  while following the fitted power law above \(d_{\text{min}}\). 
-In particular, we generate from the fitted power law a number of synthetic datasets equal to the number of elements in the original dataset which have degree greater than \(d_{\text{min}}\); while for the remaining elements we sample uniformly at random from the observed data set that have degree less than \(d_{\text{min}}\).
+2. We generate a substantial number of synthetic datasets mimic the distribution of the empirical data below $d_{min}$  while following the fitted power law above $d_{min}$. 
+In particular, we generate from the fitted power law a number of synthetic datasets equal to the number of elements in the original dataset which have degree greater than $d_{min}; while for the remaining elements we sample uniformly at random from the observed data set that have degree less than $d_{min}$.
 
 3. We individually fit each synthetic dataset to its own power-law model and calculate the KS statistic for each 
 one relative to its own model.
@@ -173,9 +170,9 @@ The *p-value* is therefore interpreted as a measure of the plausibility of the h
 to a power-law distribution. 
 
 A large *p-value* suggests that the difference between empirical data and the model can be attributed to 
-statistical fluctuations. Conversely, if the *p-value* is smaller than a specified threshold (in our case, \(0.1\)),
+statistical fluctuations. Conversely, if the *p-value* is smaller than a specified threshold (in our case, $0.1$),
 the model does not provide a plausible fit for the data, and the hypothesis is rejected.
-To achieve accuracy to about two decimal places, we generate \(2500\) synthetic sets. 
+To achieve accuracy to about two decimal places, we generate $2500$ synthetic sets. 
 
 We performed the degree distribution analysis on the coauthorship collaboration network using the powerlaw package for Python.
 
@@ -356,20 +353,16 @@ and builds the communities from the bottom up.
 
 ### Description of the dataset and preliminary analysis
 
-We acquired from the PubMed database 4606 papers' ids related to Prader Willi Syndrome; for each of them, we extracted the authors' names and the year of publication.
-The resulting dataset contains papers published between ... and ... with an average of ... authors per paper.
+We acquired from the PubMed database 4616 papers' ids related to Prader Willi Syndrome; for each of them, we extracted the authors' names and the year of publication.
+The resulting dataset contains papers published from 1963 to the present day.
 We performed a preliminary analysis of the dataset in order study the evolution of the number of publications,
 the number of authors and the number of authors per paper over time.
-The following figures show how these quantities evolved by a ...-year window over the period ...-... .
+The following figure show how these quantities evolved by a four-year window over the period 1963 - 2023.
 
-![Number of publications](./images/number_of_publications.png)
-
-![Number of authors](./images/number_of_authors.png)
-
-![Number of authors per paper](./images/number_of_authors_per_paper.png)
+![Pre_analysis](./images/pre_analysis_plots.png)
 
 We observed that all the three quantities increased over time; in particular, the number of publications
-followed a linear trend, while the number of authors followed an exponential trend.
+followed a linear trend ($R^2 = 0.95$), while the number of authors followed an exponential trend.
 
 ### The coauthorship collaboration network
 
@@ -381,6 +374,10 @@ The following figure shows the resulting bipartite network:
 
 We then projected the bipartite network onto the set of author nodes, obtaining the weighted coauthorship collaboration network. 
 The network contains ... edges and ... nodes and it is not connected.
+
+(We found that the graph is not connected, and it is composed of 1442 connected components. 
+We filtered out the components with one single node, and we found that the largest connected component contains
+9289 nodes, which is about 56% of the total number of nodes in graph.)
 We found that the collaboration network is composed of ... connected components, and the distribution of the
 number of nodes in the connected components is shown in the following figure:
 
@@ -399,10 +396,11 @@ The results are summarized in the following table:
 
 | Metric | Weighted | Unweighted |
 | --- | --- | --- |
-| Density |  |  |
-| Average clustering coefficient |  |  |
-| Average shortest path |  |  |
+| Density | - | 0.002 |
+| Average clustering coefficient | 0.023 | 0.882 |
+| Average shortest path | 4.359 | 5.926 |
 
+The low value of the density suggests that the coauthorship collaboration network is a sparse graph. The unweighted average clustering coefficient is quite high, indicating that the nodes in the network tend to cluster together. 
 
 ### The scale free property
 
@@ -464,3 +462,11 @@ The modularity of the final partition is about $Q = 0.904$.
 ## References
 
 [^1] : Foundation for Prader-Willi Syndrome Research. What is Prader-Willi Syndrome? [Link](https://www.fpwr.org/what-is-prader-willi-syndrome#definition) (Accessed: December 5, 2023)
+
+[^2] : National Center for Biotechnology Information. PubMed. [Link](https://pubmed.ncbi.nlm.nih.gov/) (Accessed: December 5, 2023)
+
+[^3] : Entrez Programming Utilities. [Link](https://www.ncbi.nlm.nih.gov/books/NBK179288/) 
+
+[^4] : Clauset, A., Shalizi, C. R., & Newman, M. E. J. (2009). Power-law distributions in empirical data. [DOI](
+https://doi.org/10.48550/arXiv.0706.1062)
+
