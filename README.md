@@ -430,12 +430,23 @@ We performed the community detection using the Louvain algorithm (for reproducib
 The largest community contains 985 nodes, which is about 11% of the total number of nodes in the network.
 The modularity of the final partition is about $Q = 0.903$.
 
-QUI VANNO MESSI GLI ULTIMI GRAFICI
+Below one can find a plot of the largest communities with authors colored by their highest central measure ranking.
+
+![Largest communities  ](./images/color_comm.png)
+
+Lastly we show all communities contained in the largest connected component
 
 ## Conclusion
 
-DECIDIAMO INSIME COSA SCRIVERE QUI
+In conclusion, this paper aimed to comprehensively analyze the Prader-Willi Syndrome (PWS) research community by employing graph theory and social network analysis techniques. The utilization of a dataset derived from the National Center for Biotechnology Information's PubMed database allowed for a detailed examination of the evolution of PWS publications,  and collaborative patterns.
 
+The construction and analysis of the co-authorship network provided valuable insights into the structural characteristics of the scientific community dedicated to PWS research. Key metrics, such as the number of publications, authors, and authors per paper, were examined to capture the dynamics of collaboration within the community. The investigation of the network's scale-free property through the analysis of power-law degree distribution proved the robustness of the collaboration structure.
+
+Centrality metrics were employed to identify influential authors, and the Borda count method was applied to establish a final ranking, offering a nuanced perspective on the contributors who play pivotal roles in the largest connected component of the network. This not only recognizes individual contributions but also provides a holistic view of the collaborative landscape.
+
+Furthermore, the application of the Louvain algorithm for community detection facilitated the identification of subgroups or communities within the larger network. This approach allowed for a deeper understanding of the underlying structures and relationships within the PWS research community.
+
+Overall, the findings presented in this paper contribute to the broader understanding of the scientific landscape surrounding Prader-Willi Syndrome. The combination of quantitative metrics, network analysis, and community detection techniques offers a multi-faceted exploration of the collaborative dynamics, influential figures, and structural components that shape the PWS research community. 
 ## References
 
 [^1] : Foundation for Prader-Willi Syndrome Research. What is Prader-Willi Syndrome? [Link](https://www.fpwr.org/what-is-prader-willi-syndrome#definition) (Accessed: December 5, 2023)
