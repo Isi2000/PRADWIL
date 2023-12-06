@@ -136,8 +136,7 @@ According to the conventional definition, edge weights are typically interpreted
 
 #### The scale free property
 
-One of the notable models for complex networks is the **scale-free network**, characterized by a degree distribution that follows a heavy-tailed power law. 
-This implies an abundance of nodes with degrees significantly higher than the average, and this property is associated with the network's **robustness**. 
+A **scale-free network** is characterized by a degree distribution that follows a heavy-tailed power law. This implies an abundance of nodes with degrees significantly higher than the average, and this property is associated with **robustness**. 
 To investigate this, we analyzed the power-law degree distribution of the coauthorship collaboration network using methods outlined by Clauset et al., (2009).[^4]
 
 The analysis involves the following steps:
@@ -156,24 +155,21 @@ The fitting function will be characherized by an estimated scaling parameter $\h
 bound $d_{min}$ .
 Then, we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit, which is interpreted as a "distance" between the empirical distribution and the fitted power law.
 
-Then, in order to assess the goodness of the fit, we use the following procedure:
+Then, in order to assess the goodness of the fit, we use the following procedureQUA STRINGEREI E CITEREI IL PAPER ORIGINALE:
 
-2. We generate a substantial number of synthetic datasets mimic the distribution of the empirical data below $d_{min}$  while following the fitted power law above $d_{min}$. 
-In particular, we generate from the fitted power law a number of synthetic datasets equal to the number of elements in the original dataset which have degree greater than $d_{min}; while for the remaining elements we sample uniformly at random from the observed data set that have degree less than $d_{min}$.
+2. We generate a substantial number of synthetic datasets
+<!-- FORSE MOLTO DRASTICO
+mimic the distribution of the empirical data below $d_{min}$  while following the fitted power law above $d_{min}$.
+In particular, we generate from the fitted power law a number of synthetic datasets equal to the number of elements in the original dataset which have degree greater than $d_{min}; while for the remaining elements we sample uniformly at random from the observed data set that have degree less than $d_{min}$. -->
 
-3. We individually fit each synthetic dataset to its own power-law model and calculate the KS statistic for each 
-one relative to its own model.
+3. We individually fit each synthetic dataset to its own power-law model and calculate the KS statistic for each one relative to its own model.
+4. Finally, the goodness of the fit is assessed through the *p-value*,  which is computed as the fraction of times the KS statistics of the syntetic datases is larger than the observed KS distance. 
 
-4. Finally, the goodness of the fit is assessed through the *p-value*,  which is computed as the fraction 
-of times the KS statistics of the syntetic datases is larger than the observed KS distance. 
-The *p-value* is therefore interpreted as a measure of the plausibility of the hypothesis that our data conforms 
-to a power-law distribution. 
+A large *p-value* suggests that the difference between empirical data and the model can be attributed to statistical fluctuations. Conversely, if the *p-value* is smaller than a specified threshold (in our case, $0.1$),
+the model does not provide a plausible fit for the data, and the hypothesis is rejected. To achieve accuracy to about two decimal places, we generate $2500$ synthetic sets. 
 
-A large *p-value* suggests that the difference between empirical data and the model can be attributed to 
-statistical fluctuations. Conversely, if the *p-value* is smaller than a specified threshold (in our case, $0.1$),
-the model does not provide a plausible fit for the data, and the hypothesis is rejected.
-To achieve accuracy to about two decimal places, we generate $2500$ synthetic sets. 
 
+QUESTA ROBA QUA VA NELLA SEZIONE DI VULCAN E LIBRERIE
 We performed the degree distribution analysis on the coauthorship collaboration network using the powerlaw package for Python.
 
 #### Identification of the most influential nodes
