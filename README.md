@@ -52,6 +52,8 @@ Notably, the the following Python libraries were employed for the network analys
 
 - **NetworkX**: Utilized for the creation, manipulation, and analysis of complex networks and graph structures.
 - **Matplotlib**: Employed for data visualization, including the creation of static, interactive, and animated plots.
+- **Powerlaw**: Used for investigating the degree distribution of the coauthorship collaboration network and for
+assessing its scale free property.
 
 ### Construction of the authors collaboration network
 
@@ -86,19 +88,19 @@ The local clustering coefficient in an undirected and unweighted graph for a nod
 Mathematically, it is expressed as:
 
 $$
-C^{unw}_i = \frac{2t_i}{k_i(k_i-1)}
+C^{unw}_i = \frac{2t_i}{d_i(d_i-1)}
 $$
 
-where $t_i$ is the number of triangles through node $i$ and $k_i$ is the degree of node $i$.
+where $t_i$ is the number of triangles through node $i$ and $d_i$ is the degree of node $i$.
 
 On the other hand, there are several way for defining the local clustering coefficient in a weighted graph.
 In our project, we employed the geometric average of the subgraph edge weights:
 
 $$
-C^{w}_u = \frac{1}{k_u(k_u-1)} \sum_{i,j} \sqrt[3]{\hat{w}_{ij} \hat{w}_{iu} \hat{w}_{ju}}
+C^{w}_u = \frac{1}{d_u(d_u-1)} \sum_{i,j} \sqrt[3]{\hat{w}_{ij} \hat{w}_{iu} \hat{w}_{ju}}
 $$
 
-where the edge weights $\hat{w}_{ij}$ are normalized by the maximum weight in the graph, and $k_u$ is the degree of the node $u$ and the value $C_u$ is set to 0 if $k_u < 2$.
+where the edge weights $\hat{w}_{ij}$ are normalized by the maximum weight in the graph, and $d_u$ is the degree of the node $u$ and the value $C_u$ is set to 0 if $k_u < 2$.
 
 In both the weighted and unweighted case, the global clustering coefficient is defined as the average of the local clustering coefficients of all the nodes in the graph:
 
@@ -132,7 +134,10 @@ $$
 
 where $w(v_i, v_j)$ is the weight of the shortest path between the nodes $v_i$ and $v_j$.
 
-According to the conventional definition, edge weights are typically interpreted as distances or costs, implying that shorter paths have lower weights. However, in our context, a higher weight between two nodes indicates a stronger collaboration between the two authors. To compute the aforementioned metrics, we need to establish a new weight scheme where the weights are defined as the reciprocals of the original weights.
+According to the conventional definition of shortest path in a weighted graph, edge weights are typically interpreted as distances or costs, implying that shorter paths have lower weights.
+However, in our scenario, a higher weight between two nodes signifies a stronger collaboration between the respective authors.
+Consequently, when calculating the shortest paths in our network, we must treat paths with higher weights as "shortest", reflecting more frequent and substantial collaborations between authors. In order to achieve this, when calculating the shortest path, we take the reciprocal of the weights.
+This adjustment aligns with the notion that heavier weights represent stronger connections between authors.
 
 #### The scale free property
 
@@ -155,22 +160,15 @@ The fitting function will be characherized by an estimated scaling parameter $\h
 bound $d_{min}$ .
 Then, we compute the value $D$ of the Kolmogorov-Smirnov (KS) statistics for this fit, which is interpreted as a "distance" between the empirical distribution and the fitted power law.
 
-Then, in order to assess the goodness of the fit, we use the following procedureQUA STRINGEREI E CITEREI IL PAPER ORIGINALE:
+Then, in order to assess the goodness of the fit, we use the following procedure:
 
-2. We generate a substantial number of synthetic datasets
-<!-- FORSE MOLTO DRASTICO
-mimic the distribution of the empirical data below $d_{min}$  while following the fitted power law above $d_{min}$.
-In particular, we generate from the fitted power law a number of synthetic datasets equal to the number of elements in the original dataset which have degree greater than $d_{min}; while for the remaining elements we sample uniformly at random from the observed data set that have degree less than $d_{min}$. -->
+2. We generate a substantial number of synthetic datasets mimic the distribution of the empirical data below $d_{min}$  while following the fitted power law above $d_{min}$.
 
 3. We individually fit each synthetic dataset to its own power-law model and calculate the KS statistic for each one relative to its own model.
 4. Finally, the goodness of the fit is assessed through the *p-value*,  which is computed as the fraction of times the KS statistics of the syntetic datases is larger than the observed KS distance. 
 
 A large *p-value* suggests that the difference between empirical data and the model can be attributed to statistical fluctuations. Conversely, if the *p-value* is smaller than a specified threshold (in our case, $0.1$),
 the model does not provide a plausible fit for the data, and the hypothesis is rejected. To achieve accuracy to about two decimal places, we generate $2500$ synthetic sets. 
-
-
-QUESTA ROBA QUA VA NELLA SEZIONE DI VULCAN E LIBRERIE
-We performed the degree distribution analysis on the coauthorship collaboration network using the powerlaw package for Python.
 
 #### Identification of the most influential nodes
 
@@ -179,24 +177,23 @@ since it allows to identify the nodes that are most important for the structure 
 There are many metrics that can be used to evaluate the importance of a node in a network, each of them
 capturing a different aspect of the node's importance.
 In this section, we will describe some of the most common metrics for node importance evaluation,
-and we will use them to identify the most influential authors in the Alzheimer's disease collaboration network.
+and we will use them to identify the most influential authors in the PWS collaboration network.
 
-- Degree centrality
+- **Degree centrality**
 
-The degree centrality quantifies the importance of a node in a network by computing the degree of each node (
-i.e. the number of links that the node has with other nodes in the network),
-and then normalizing it by the maximum possible degree in the network (which is given by the number of nodes
-minus one): 
+The degree centrality quantifies the importance of a node in a network by computing the number of links
+that the node has with other nodes in the network (the degree of the node),
+and then normalizing it by the maximum possible degree in the network: 
 
 $$
-C_D(v) = \frac{k_v}{n-1}
+C_D(v) = \frac{d_v}{n-1}
 $$
 
-where $k_v$ is the degree of the node $v$ and $n$ is the number of nodes in the network.
+where $d_v$ is the degree of the node $v$ and $n$ is the number of nodes in the network.
 The degree centrality assigns a higher score to the nodes with a higher degree, meaning that the nodes with
 more links are considered more important.
 
-- Betweenness Centrality
+- **Betweenness Centrality**
 
 Betweenness centrality is a measure that assesses the importance of a node in a network by calculating the 
 number of shortest paths passing through that node for all pairs of nodes in the network. 
@@ -205,65 +202,52 @@ in the network.
 Mathematically, it is expressed as:
 
 $$
-C_B(v) = \frac{\sum_{s \neq v \neq t} \sigma_{st}(v)}{\sum_{s \neq t} \sigma_{st}}
+c_B(v) = \sum_{s,t \in V} \frac{\sigma({s,t} | v)}{\sigma({s,t})}
 $$
 
-Here, $\sigma_{st}$ represents the number of shortest paths between nodes $s$ and $t$, and $\sigma_{st}(v)$ 
+Here, $\sigma(s,t)$ represents the number of shortest paths between nodes $s$ and $t$, and $\sigma({s, t} | v)$ 
 denotes the number of those paths that traverse the node $v$. Betweenness centrality identifies nodes that act 
 as crucial bridges between different sections of the network, playing a pivotal role in the flow of information.
 
-In our specific context, we need to consider the coauthorship collaboration network as a weighted graph. 
-Consequently, when calculating shortest paths, we must treat paths with higher weights as "shortest", reflecting 
-more frequent collaborations between authors. However, in algorithms for computing shortest paths, weights are 
-often interpreted as distances or costs, implying that shorter paths have lower weights.
+Given that the definition of betweenness centrality relies on the concept of shortest paths, we adopt the same adjustment as previously described for the calculation of the average shortest path. 
+To account for the fact that higher weight edges represent stronger connections between authors, we take the reciprocal of the weights.
 
-Therefore, in our calculations for betweenness centrality, we must account for the weighted nature of the graph 
-by taking the reciprocal of the weights. 
-This adjustment ensures that the algorithms correctly identify paths with the highest collaborative significance, 
-aligning with the notion that heavier weights represent stronger connections between authors.
+- **Closeness centrality**
 
-- Closeness centrality
-
-The closeness centrality is defined as the inverse of the average distance between a node and all other nodes.
-For each node $v$ in the network, the closeness centrality is computed by calculating the average of the distances 
-from the node $v$ to all other nodes in the network (length of the shortest path between $v$ and the other nodes),
-and then taking the reciprocal of this value:
+The closeness centrality for a node $v$ is defined as the inverse of the average distance between that node and all other reachable nodes.
+The mathematical expression for the closeness centrality is:
 
 $$
-C_C(v) = \frac{1}{\frac{1}{n-1} \sum_{u \neq v} d(v,u)}
+C_c(v) = \frac{n-1}{\sum_{v=1}^{n-1} d(v,u)}
 $$
 
 where $d(v,u)$ is the length of the shortest path between the nodes $v$ and $u$, and $n$ is the number of nodes
 in the network.
 
-Closeness centrality provides a metric for evaluating how proximate a node is to all other nodes within a network. 
-Nodes exhibiting high closeness centrality can efficiently reach all other nodes in the network in a limited number 
-of steps. This measure is indicative of how rapidly information can disseminate from a particular node to the 
-entire network.
+Closeness centrality provides a metric for evaluating how proximate a node is to all other nodes within a network.
+Nodes with high closeness centrality can efficiently reach all other nodes in the network in a limited number of steps, meaning that they can rapidly disseminate information to the entire network.
 
-Similar to the considerations for betweenness centrality, the computation of shorter paths in a weighted graph 
-necessitates the adjustment of weights. 
-Also in this case, we take the reciprocal of the weights to properly account for the weighted nature of the graph. 
+Similar to the definitions of average shortest path and betweenness centrality, closeness centrality is based on the concept of the shortest path. Hence, the considerations made for the calculation of those metrics still hold. Therefore, for closeness centrality as well, the weights used in the computation are derived from the reciprocal of the original weights.
 
-- Eigenvector centrality
+- **Eigenvector centrality**
 
 The eigenvector centrality measures the importance of a node in a network by considering the importance of 
 its neighbors, providing a recursive definition of node importance.
 
-The eigenvector centrality \(x_i\) for node \(i\) is defined as:
+The eigenvector centrality $x_i$ for node $i$ is defined as:
 
 $$
 x_i = \frac{1}{\lambda} \sum_k a_{k,i} \, x_k
 $$
 
-where \(A = (a_{i,j})\) represents the adjacency matrix of the network, \(\lambda \neq 0\) is a constant, 
-and \(x_k\) is the centrality of node \(k\). The same relationship can be expressed in matrix form as:
+where $A = (a_{i,j})$ represents the adjacency matrix of the network, $\lambda \neq 0$ is a constant, 
+and $x_k$ is the centrality of node $k$. The same relationship can be expressed in matrix form as:
 
 $$
-\lambda x = x A
+A x = \lambda x
 $$
 
-where \(\lambda\) is the eigenvalue and \(x\) is the eigenvector of the adjacency matrix \(A\).
+where $\lambda$ is the eigenvalue and $x$ is the eigenvector of the adjacency matrix $A$.
 
 Consequently, the eigenvector centrality is given by the eigenvectors associated with the largest eigenvalue 
 of the adjacency matrix of the network.
@@ -274,24 +258,21 @@ This iterative technique starts with a random vector and repeatedly multiplies i
 of the network until the vector converges to the eigenvector associated with the largest eigenvalue of the 
 adjacency matrix. At each iteration, the vector is normalized to prevent it from growing indefinitely.
 
-- Final ranking with Borda count
+- **Final ranking with Borda count**
 
 After the evalution of the importance of each node in the network using the four metrics described above,
 we combined the results of the four metrics to obtain a final ranking of the most influential authors in the
-Alzheimer's disease collaboration network.
+PWS collaboration network.
 
-In order to combine the results, we used the Borda count method, which is a single-winner election method in
-which voters rank candidates in order of preference.
-In particular, for each metric, we ranked the authors in descending order according to the value of the metric,
-and we assigned to each author a score equal to the number of authors that are ranked below him.
-Then, we summed the scores obtained by each author for each metric, and we ranked the authors according to
-the total score.
+In order to combine the results, we used the Borda count method.
+
+In partucilar, we perfomed a ranking for each metric by arranging authors in descending order based on their metric values. Each author received a score corresponding to the count of authors ranked below them. Subsequently, we sum the scores obtained by each author across all metrics and the final ranking is obtained by arranging authors in descending order based on their total scores.
 
 
 #### Community detection and Louvain algorithm
 
 Community detection is the process of identifying groups of nodes that are more densely connected to each 
-other than to the rest of the network. This can be useful in order to understand the structure of the network and to identify nodes wich shares similar
+other than to the rest of the network. This can be useful in order to understand the structure of the network and to identify nodes which shares similar
 characteristics or functions.
 In our context, communities represent groups of authors that have a higher tendency to collaborate with each other.
 There is no universally accepted definition of what constituets a community, but there are several measures
@@ -302,10 +283,10 @@ So that, a measure of the quality of a community partition of a network is the m
 network, is defined as:
 
 $$
-Q = \frac{1}{2m} \sum_{i,j} \left[ A_{ij} - \frac{k_i k_j}{2m} \right] \delta(c_i, c_j)
+Q = \frac{1}{2m} \sum_{i,j} \left[ A_{ij} - \frac{d_i d_j}{2m} \right] \delta(c_i, c_j)
 $$ 
 
-where $A_{ij}$ is the element of the adjacency matrix of the network, $k_i$ and $k_j$ are the degrees of the 
+where $A_{ij}$ is the element of the adjacency matrix of the network, $d_i$ and $d_j$ are the degrees of the 
 nodes $i$ and $j$, $m$ is the number of edges in the network, $c_i$ and $c_j$ are the communities to which 
 the nodes $i$ and $j$ belong, and $\delta(c_i, c_j)$ is the Kronecker delta function, which is equal to 1 
 if $c_i = c_j$ (the nodes $i$ and $j$ belong to the same community) and 0 otherwise.
@@ -316,22 +297,23 @@ There are several algorithms for community detection, and many of them are based
 modularity.
 In our project, we performed the community detection using the Louvain algorithm, which is a modularity-based,
 agglomerative, heuristic method.
-This algorithm, proposed by Blondel et al. in 2008, have been shown to be very fast and to produce partitions 
+This algorithm, proposed by Blondel et al. in 2008[^5], have been shown to be very fast and to produce partitions 
 with a high modularity.
 It consists of two phases: 
 1. The algorithm starts by assigning each node to its own community. Then, for each node in the network, it
-evaluates the gain in modularity that would result from moving the node to each of its neighbors' communities as:
+evaluates the gain in modularity that would result from moving the node $i$ to each of its neighbors' communities $C$ as:
 
 $$
-\Delta Q = \frac{1}{2m} \left[ \frac{\sum_{in} + k_{i,in}}{2m} - \left( \frac{\sum_{tot} + k_i}{2m} \right)^2 \right] - \frac{1}{2m} \left[ \frac{\sum_{in}}{2m} - \left( \frac{\sum_{tot}}{2m} \right)^2 - \left( \frac{k_i}{2m} \right)^2 \right]
+\Delta Q = \bigg[ 
+    \frac{\sum_{in} + 2k_i^{in}}{2m} - \bigg( \frac{\sum_{tot} + k_i}{2m} \bigg)^2
+\bigg] - \bigg[
+    \frac{\sum_{in}}{2m} - \bigg( \frac{\sum_{tot}}{2m} \bigg)^2 - \bigg( \frac{k_i}{2m} \bigg)^2
+    \bigg]
 $$
 
-where $\sum_{in}$ is the sum of the weights of the links between the node $i$ and the nodes in the community
-to which $i$ belongs, $\sum_{tot}$ is the sum of the weights of the links between the node $i$ and all the
-nodes in the network, $k_i$ is the degree of the node $i$, $k_{i,in}$ is the sum of the weights of the links
-between the node $i$ and the nodes in the community to which $i$ belongs, and $m$ is the sum of the weights
-of all the links in the network.
-The order im which the nodes does not have significant influence on the final modularity value, but it 
+where $\sum_{in}$ is the sum of the weights of the links inside the community $C$, $\sum_{tot}$ is the sum of the weights of the links incident to the nodes in the community $C$, $k_i$ is the sum of the weights of the links incident to the node $i$, and $k_i^{in}$ is the sum of the weights of the links from the node $i$ to to nodes in the community $C$, and $m$ is the sum of the weights of all the links in the network.
+
+The order in which the nodes does not have significant influence on the final modularity value, but it 
 may affect the computational time. 
 The node is then moved to the neighbor's community that results in the largest increase in modularity.
 This process is repeated iteratively until no further increase in modularity can be achieved.
@@ -353,35 +335,32 @@ We acquired from the PubMed database 4616 papers' ids related to Prader Willi Sy
 The resulting dataset contains papers published from 1963 to the present day.
 We performed a preliminary analysis of the dataset in order study the evolution of the number of publications,
 the number of authors and the number of authors per paper over time.
-The following figure show how these quantities evolved by a four-year window over the period 1963 - 2023.
+The following figure show how these quantities evolved by a four-year window over the period 1960 - 2023.
 
 ![Pre_analysis](./images/pre_analysis_plots.png)
 
-We observed that all the three quantities increased over time; in particular, the number of publications
-followed a linear trend ($R^2 = 0.95$), while the number of authors followed an exponential trend.
+The three plotted quantities show a clear increasing trend over time.
+We performed a linear regression analysis on the number of articles, finding a R-squared of 0.95, indicating a clear linear trend in the increase of the number of articles over time.
+On the other hand, we fitted the number of authors per paper with a second-degree polynomial, and we found a R-squared of 0.99, indicating a clear polynomial trend in the increase of the number of authors per paper over time.
 
 ### The coauthorship collaboration network
 
 We constructed the coauthorship collaboration network from the bipartite network of authors and ids.
-The resulting network contains ... edges and ... nodes, where ... are authors nodes and ... are paper nodes.
-The following figure shows the resulting bipartite network:
+The resulting network contains 25501 edges and a total number of 21110 nodes, where 16504 are authors nodes and 4606 are paper nodes.
+The following figure provides a visualization of the entire bipartite network:
 
-![Bipartite network](./images/bipartite_network.png)
+![Bipartite network](./images/bipartite_graph.png)
 
-We then projected the bipartite network onto the set of author nodes, obtaining the weighted coauthorship collaboration network. 
-The network contains ... edges and ... nodes and it is not connected.
-
-(We found that the graph is not connected, and it is composed of 1442 connected components. 
-We filtered out the components with one single node, and we found that the largest connected component contains
-9289 nodes, which is about 56% of the total number of nodes in graph.)
-We found that the collaboration network is composed of ... connected components, and the distribution of the
-number of nodes in the connected components is shown in the following figure:
+Subsequently, we projected the bipartite network onto the set of author nodes, generating a weighted coauthorship collaboration network. The resultant network comprises 16,504 nodes and 89,647 edges. 
+The coauthorship collaboration network is not connected and it consists of 1,442 connected components.
+The largest connected component contains 9,289 nodes, which is about 56% of the total number of nodes in the 
+collaboration network. The other connected components exhibit considerably smaller sizes, with the majority containing fewer than 10 nodes each.
+The distribution of the number of nodes in the connected components is shown in the following figure:
 
 ![Connected components](./images/connected_components.png)
 
-The largest connected component contains ... nodes, which is about ...% of the total number of nodes in the network;
-all the other connected components are much smaller, and they contain less than ... nodes.
-We therefore decided to focus our analysis on the largest connected component.
+Subsequently, since the largest connected component contains the majority of the nodes in the network and
+the other connected components are very small, we decided to focus our analysis on the largest connected component.
 
 ### Metrics for network characterization
 
@@ -465,4 +444,8 @@ The modularity of the final partition is about $Q = 0.904$.
 
 [^4] : Clauset, A., Shalizi, C. R., & Newman, M. E. J. (2009). Power-law distributions in empirical data. [DOI](
 https://doi.org/10.48550/arXiv.0706.1062)
+
+[^5] : Blondel, V. D., Guillaume, J.-L., Lambiotte, R., & Lefebvre, E. (2008). Fast unfolding of communities in large networks. [DOI](
+https://doi.org/10.48550/arXiv.0803.0476
+)
 
