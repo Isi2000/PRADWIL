@@ -57,7 +57,7 @@ assessing its scale free property.
 
 ### Construction of the authors collaboration network
 
-We start by constructing the author-paper bipartite network $ G = (U, V, E)$, where the disjoint and independent sets of nodes $U$ and $V$ represent authors and papers, while the links between them denote the authorship relation. 
+We start by constructing the author-paper bipartite network $G = (U, V, E)$, where the disjoint and independent sets of nodes $U$ and $V$ represent authors and papers, while the links between them denote the authorship relation. 
 Subsequently, we derive the coauthorship collaboration network from the original bipartite network by projecting it onto the set of author nodes. 
 
 In this new graph, denoted as $G' = (V, E)$, each author is represented by a vertex $v_i$, while the existence of an edge between two different authors means that there exists at least one path between them in the original bipartite graph $G$, indicating a shared paper.
@@ -97,7 +97,7 @@ On the other hand, there are several way for defining the local clustering coeff
 In our project, we employed the geometric average of the subgraph edge weights:
 
 $$
-C^{w}_u = \frac{1}{d_u(d_u-1)} \sum_{i,j} \sqrt[3]{\hat{w}_{ij} \hat{w}_{iu} \hat{w}_{ju}}
+C^{w}_{u} = \frac{1}{d_u(d_u-1)} \sum_{i,j} \sqrt[3]{\hat{w}_{ij} \hat{w}_{iu} \hat{w}_{ju}}
 $$
 
 where the edge weights $\hat{w}_{ij}$ are normalized by the maximum weight in the graph, and $d_u$ is the degree of the node $u$ and the value $C_u$ is set to 0 if $k_u < 2$.
@@ -218,7 +218,7 @@ The closeness centrality for a node $v$ is defined as the inverse of the average
 The mathematical expression for the closeness centrality is:
 
 $$
-C_c(v) = \frac{n-1}{\sum_{v=1}^{n-1} d(v,u)}
+C_c(v) = \frac{n-1}{{\sum^{n-1}_{v=1}} d(v,u)}
 $$
 
 where $d(v,u)$ is the length of the shortest path between the nodes $v$ and $u$, and $n$ is the number of nodes
