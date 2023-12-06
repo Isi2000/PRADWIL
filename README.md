@@ -423,15 +423,18 @@ final ranking:
 
 ### Community detection and Louvain algorithm
 
-We performed the community detection using the Louvain algorithm (for reproducibility, we fixed the random seed to 42). The algorithm identified 73 different communities, and the distribution of the number of nodes in the communities is shown in the following figure:
+We performed the community detection using the Louvain algorithm (for reproducibility, we fixed the random seed to 42). The algorithm identified 65 different communities, and the distribution of the number of nodes in the communities is shown in the following figure:
 
-![Community size](./images/community_size.png)
+![Community size](./images/communities_size_distribution.png)
 
-The largest community contains ... nodes, which is about ...% of the total number of nodes in the network.
-The modularity of the final partition is about $Q = 0.904$.
+The largest community contains 985 nodes, which is about 11% of the total number of nodes in the network.
+The modularity of the final partition is about $Q = 0.903$.
 
+QUI VANNO MESSI GLI ULTIMI GRAFICI
 
 ## Conclusion
+
+DECIDIAMO INSIME COSA SCRIVERE QUI
 
 ## References
 

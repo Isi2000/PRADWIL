@@ -69,7 +69,25 @@ list_of_communities.sort(key=len, reverse=True)
 main_community = list_of_communities[0]
 print('Number of nodes of the main community:', len(main_community))
 print('Percentage of nodes of the main community:', len(main_community) / len(cc))
+#Lenghts of the communities
+lenghts = [len(comp) for comp in list_of_communities]
 
+print('Number of communities with less than 10 nodes:', len([l for l in lenghts if l < 10]))
+
+#Histogram of the communities lenghts
+
+plt.figure(figsize=(13, 7))
+plt.hist(lenghts, bins=50, log=False)
+plt.xlabel('Community size (number of nodes)', fontsize=12, fontweight='bold')
+plt.ylabel('Number of communities', fontsize=12, weight='bold')
+plt.xticks(range(0, 1000, 100))
+plt.title('Communities size distribution', fontsize=15, fontweight='bold')
+
+# Save the plot
+plt.savefig('./images/communities_size_distribution.png', dpi=300, bbox_inches='tight')
+
+
+"""
 # Estrai il sottografo corrispondente alla main community
 main_community_subgraph = cc.subgraph(main_community).copy()
 
@@ -101,3 +119,4 @@ induced_graph = community.induced_graph(partition, cc)
 pos = nx.kamada_kawai_layout(induced_graph)
 nx.draw(induced_graph, pos = pos, node_size=10, with_labels=False)
 plt.show()
+"""
