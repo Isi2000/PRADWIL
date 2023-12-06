@@ -19,10 +19,12 @@ print('Done!')
 number_of_authors_nodes = len([node for node in G.nodes if G.nodes[node]['bipartite'] == 1])
 number_of_papers_nodes = len([node for node in G.nodes if G.nodes[node]['bipartite'] == 0])
 total_number_of_nodes = number_of_authors_nodes + number_of_papers_nodes
+number_of_edges = G.number_of_edges()
 
 print('Number of authors nodes:', number_of_authors_nodes)
 print('Number of papers nodes:', number_of_papers_nodes)
 print('Total number of nodes:', total_number_of_nodes)
+print('Total number of edges:', number_of_edges)
 
 # Coauthorship graph---------------------------------------------------------
 
@@ -58,14 +60,35 @@ filtered_connected_components = \
 print('Number of connected components: ', number_of_connected_components)
 print('Number of connected components with more than one node: ', len(filtered_connected_components))
 print('Percentage of nodes in the largest connected component: ', \
-      len(max(filtered_connected_components, key=len)) / number_of_nodes)
+      len(max(connected_components, key=len)) / number_of_nodes)
 
 # Computing the length of all the connected components
 
 lengths = [len(comp) for comp in filtered_connected_components]
+lenghts_not_filtered = [len(comp) for comp in connected_components]
+sorted_lengths_not_filtered = sorted(lenghts_not_filtered, reverse=True)
 sorted_lengths = sorted(lengths, reverse=True)
 
 print('Lengths of the connected components: ', sorted_lengths)
+
+# Histogram of the lengths of the connected components with a logarithmic scale on the y axis
+
+import matplotlib.pyplot as plt
+
+#Escludo il primo elemento perché è il numero di nodi della componente connessa più grande
+filtered_sorted_lengths = sorted_lengths_not_filtered[1:]
+
+plt.figure(figsize=(10, 6))
+plt.hist(filtered_sorted_lengths, bins=115, log=True)
+plt.xlim(0, 115)
+plt.yscale('log')
+plt.xlabel('Number of nodes', fontweight='bold')
+plt.xticks(np.arange(0, 116, 5))
+plt.ylabel('Number of connected components', fontweight='bold')
+plt.title('Histogram of the number of nodes of the connected components', fontsize=15, fontweight='bold')
+
+#Saving the histogram
+plt.savefig('./images/connected_components_histogram.png')
 
 largest_cc = max(filtered_connected_components, key=len)
 print('Number of nodes of the largest connected component:', len(largest_cc))

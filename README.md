@@ -354,10 +354,10 @@ The following figure provides a visualization of the entire bipartite network:
 Subsequently, we projected the bipartite network onto the set of author nodes, generating a weighted coauthorship collaboration network. The resultant network comprises 16,504 nodes and 89,647 edges. 
 The coauthorship collaboration network is not connected and it consists of 1,442 connected components.
 The largest connected component contains 9,289 nodes, which is about 56% of the total number of nodes in the 
-collaboration network. The other connected components exhibit considerably smaller sizes, with the majority containing fewer than 10 nodes each.
-The distribution of the number of nodes in the connected components is shown in the following figure:
+collaboration network. The other connected components exhibit considerably smaller sizes, with the majority containing fewer than 20 nodes each.
+The following figure shows the histogram of the number of nodes in the connected components where the largest connected component is excluded:
 
-![Connected components](./images/connected_components.png)
+![Connected components](./images/connected_components_histogram.png)
 
 Subsequently, since the largest connected component contains the majority of the nodes in the network and
 the other connected components are very small, we decided to focus our analysis on the largest connected component.
