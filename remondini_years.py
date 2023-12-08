@@ -69,15 +69,17 @@ p_list = [eig_positions, deg_positions, bet_positions, clo_positions]
 r_list = []
 for i in p_list:
     auth_in_y = []
+    print(i.keys())
+    print('\n')
     for auth in i.keys():
         auth_in_y.append([auth, auth_max_min_y[auth]])
-        r_list.append(auth_in_y)
+    r_list.append(auth_in_y)
 
 
 borda = np.load("./results/borda.npy")
 borda_positions = {author: position for position, (author, _) in enumerate(borda, start=1)}
-print(len(borda_positions))
-"""
+
+
 # Mapping colors to centrality measures
 centrality_colors = {
     'eig': 'red',
@@ -96,7 +98,7 @@ def plot_scatter(ax, data, title, color):
     ax.set_ylabel("Time span between most recent and oldest publication")
     ax.set_title(title)
     ax.set_xticks([])  # Remove x-axis ticks and labels
-    ax.set_yticks([])  # Remove y-axis ticks and labels
+    #ax.set_yticks([])  # Remove y-axis ticks and labels
     
 # Create a 2 by 2 grid for subplots
 fig, axs = plt.subplots(2, 2, figsize=(10, 8))
