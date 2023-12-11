@@ -329,15 +329,18 @@ and builds the communities from the bottom up.
 
 ## Results 
 
-### Description of the dataset and preliminary analysis
+### Description of the dataset and data cleaning
 
 We acquired from the PubMed database 4616 papers' ids related to Prader Willi Syndrome; for each of them, we extracted the authors' names and the year of publication.
+During the analysis of our dataset, we observed variability in the representation of authors, with some listed by their full names and others only by initials. To avoid inaccurate counts, we implemented a cleaning procedure using the Levenshtein package in Python. This calculates the "distance" between strings, helping us identify and unify similar variants of names. By setting an appropriate threshold, we ensured that authors with different representations were correctly identified. This crucial step contributed to standardizing the representation of authors in the dataset, improving the reliability of our analyses.  
 The resulting dataset contains papers published from 1963 to the present day.
+
+### Preliminary analysis
 We performed a preliminary analysis of the dataset in order study the evolution of the number of publications,
 the number of authors and the number of authors per paper over time.
 The following figure show how these quantities evolved by a four-year window over the period 1960 - 2023.
 
-![Pre_analysis](./images/pre_analysis_plots.png)
+![Pre_analysis](./images/pre_analysis_plots_cleaned.png)
 
 The three plotted quantities show a clear increasing trend over time.
 We performed a linear regression analysis on the number of articles, finding a R-squared of 0.95, indicating a clear linear trend in the increase of the number of articles over time.
@@ -346,18 +349,18 @@ On the other hand, we fitted the number of authors per paper with a second-degre
 ### The coauthorship collaboration network
 
 We constructed the coauthorship collaboration network from the bipartite network of authors and ids.
-The resulting network contains 25501 edges and a total number of 21110 nodes, where 16504 are authors nodes and 4606 are paper nodes.
+The resulting network contains 25501 edges and a total number of 21001 nodes, where 16395 are authors nodes and 4606 are paper nodes.
 The following figure provides a visualization of the entire bipartite network:
 
 ![Bipartite network](./images/bipartite_graph.png)
 
-Subsequently, we projected the bipartite network onto the set of author nodes, generating a weighted coauthorship collaboration network. The resultant network comprises 16,504 nodes and 89,647 edges. 
-The coauthorship collaboration network is not connected and it consists of 1,442 connected components.
-The largest connected component contains 9,289 nodes, which is about 56% of the total number of nodes in the 
+Subsequently, we projected the bipartite network onto the set of author nodes, generating a weighted coauthorship collaboration network. The resultant network comprises 16,395 nodes and 89,229 edges. 
+The coauthorship collaboration network is not connected and it consists of 1,426 connected components.
+The largest connected component contains 9,304 nodes, which is about 57% of the total number of nodes in the 
 collaboration network. The other connected components exhibit considerably smaller sizes, with the majority containing fewer than 20 nodes each.
 The following figure shows the histogram of the number of nodes in the connected components where the largest connected component is excluded:
 
-![Connected components](./images/connected_components_histogram.png)
+![Connected components](./images/connected_components_histogram_cleaned.png)
 
 Subsequently, since the largest connected component contains the majority of the nodes in the network and
 the other connected components are very small, we decided to focus our analysis on the largest connected component.
@@ -386,18 +389,18 @@ The results are summarized in the following table:
 
 | Parameter | Value |
 | --- | --- |
-| $\hat{\alpha}$ | 3.5 |
-| $d_{\text{min}}$ | 69 |
-| $D$ | 0.03 |
+| $\hat{\alpha}$ | 3.4 |
+| $d_{\text{min}}$ | 70 |
+| $D$ | 0.04 |
 
 The plot of the empirical degree distribution and the cumulative degree distribution with the fitted power law
 are shown in the following figures:
 
-![Degree distribution](./images/degree_distribution.png)
+![Degree distribution](./images/degree_distribution_cleaned.png)
 
 
 The alpha value is slightly outside the typical range of 2 < alpha < 3, but it is notably close to the upper limit of 3. Additionally, given the graphs and the low D value, the power-law model seems to provide a good fit to the data. Subsequently, we continued our analysis by estimating the p-value.
-We found a very large p-value of 0.999, indicating that the difference between the empirical data and the model can be attributed to statistical fluctuations. Therefore, the model provides a plausible fit for the data.
+We found p-value close to 1, indicating that the difference between the empirical data and the model can be attributed to statistical fluctuations. Therefore, the model provides a plausible fit for the data.
 
 ### Identification of the most influential nodes
 
