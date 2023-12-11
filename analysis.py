@@ -132,6 +132,7 @@ degree_centrality = nx.degree_centrality(cc)
 degree_centrality_sorted = sorted(degree_centrality.items(), key = lambda x: x[1], reverse=True)
 for influential_author in degree_centrality_sorted[:10]:
     print('Author: ', influential_author[0], 'Degree centrality: ', influential_author[1])
+np.save('degree_centrality_cleaned.npy', degree_centrality_sorted)
 
 # 2. Betweenness centrality
 
@@ -140,6 +141,7 @@ betweenness_centrality = nx.betweenness_centrality(cc, weight= lambda u, v, d: 1
 betweenness_centrality_sorted = sorted(betweenness_centrality.items(), key = lambda x: x[1], reverse=True)
 for influential_author in betweenness_centrality_sorted[:10]:
     print('Author: ', influential_author[0], 'Betweenness centrality: ', influential_author[1])
+np.save('betweenness_centrality_cleaned.npy', betweenness_centrality_sorted)
 
 # 3. Closeness centrality
 print('Ranking of authors by closeness centrality:------------------------------------------------')
@@ -147,6 +149,7 @@ closeness_centrality = nx.closeness_centrality(cc, distance= lambda u, v, d: 1 /
 closeness_centrality_sorted = sorted(closeness_centrality.items(), key = lambda x: x[1], reverse=True)
 for influential_author in closeness_centrality_sorted[:10]:
     print('Author: ', influential_author[0], 'Closeness centrality: ', influential_author[1])
+np.save('closeness_centrality_cleaned.npy', closeness_centrality_sorted)
 
 # 4. Eigenvector centrality
 print('Ranking of authors by eigenvector centrality:-----------------------------------------------')
@@ -154,6 +157,7 @@ eigenvector_centrality = nx.eigenvector_centrality(cc, weight= 'weight')
 eigenvector_centrality_sorted = sorted(eigenvector_centrality.items(), key = lambda x: x[1], reverse=True)
 for influential_author in eigenvector_centrality_sorted[:10]:
     print('Author: ', influential_author[0], 'Eigenvector centrality: ', influential_author[1])
+np.save('eigenvector_centrality_cleaned.npy', eigenvector_centrality_sorted)
 
 # Borda count
 
@@ -177,6 +181,7 @@ for author in Borda_score_degree.keys():
     Borda_score_sum[author] = sum([Borda_score[author] for Borda_score in Borda_score_list])
 
 Borda_score_sum_sorted = sorted(Borda_score_sum.items(), key = lambda x: x[1], reverse=True)
+np.save('borda_cleaned.npy', Borda_score_sum_sorted)
 
 print('Ranking of authors by Borda score:----------------------------------------------------------')
 for influential_author in Borda_score_sum_sorted[:10]:
