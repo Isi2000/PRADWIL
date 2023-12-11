@@ -6,7 +6,7 @@ import analysis_functions as af
 
 # Read the data-------------------------------------------------------------
 
-df = pd.read_json("./data/data.json")
+df = pd.read_json("./data/data_cleaned.json")
 
 #Building the bipartite graph------------------------------------------------
 
@@ -88,7 +88,7 @@ plt.ylabel('Number of connected components', fontweight='bold')
 plt.title('Histogram of the number of nodes of the connected components', fontsize=15, fontweight='bold')
 
 #Saving the histogram
-plt.savefig('./images/connected_components_histogram.png')
+plt.savefig('./images/connected_components_histogram_cleaned.png')
 
 largest_cc = max(filtered_connected_components, key=len)
 print('Number of nodes of the largest connected component:', len(largest_cc))
@@ -103,7 +103,7 @@ print('Computing the degree sequence...')
 degree_sequence = sorted((d for n, d in cc.degree()), reverse=True)
 
 print('Saving the results...')
-np.save('./results/degree_sequence.npy', degree_sequence)
+np.save('./results/degree_sequence_cleaned.npy', degree_sequence)
 print('Degree sequence saved!')
 
 
@@ -181,8 +181,3 @@ Borda_score_sum_sorted = sorted(Borda_score_sum.items(), key = lambda x: x[1], r
 print('Ranking of authors by Borda score:----------------------------------------------------------')
 for influential_author in Borda_score_sum_sorted[:10]:
     print('Author: ', influential_author[0], 'Borda score: ', influential_author[1])
-
-
-
-
-

@@ -1,12 +1,10 @@
-
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
 from unidecode import unidecode
 import Levenshtein
+import json
 
-df = pd.read_json("./PRADWIL/data/data.json")
+
+df = pd.read_json("./data/data.json")
 
 # Functions for cleaning data
 
@@ -21,9 +19,6 @@ def only_initials(name):
         return True
     else:
         return False
-
-
-
 
 
 authors_list = [] # List of authors
@@ -56,9 +51,6 @@ filtered_last_name_dict = {key: value for key, value in last_name_dict.items() i
 
 for key in filtered_last_name_dict.keys():
   filtered_last_name_dict[key] = sorted(filtered_last_name_dict[key])
-
-
-
 
 
 def is_shortened_author(author1, author2):
@@ -123,6 +115,11 @@ for index, row in df.iterrows():
             print(f"Original Author: {author}")
             print(f"Cleaned Author: {cleaned_author}")
             print("\n")
+
+# Save the cleaned dataframe in json format
+
+df.to_json("./data/data_cleaned.json")
+
 """
 with open('madonna1.txt', 'w') as file:
     for index, row in df.iterrows():

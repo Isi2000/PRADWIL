@@ -8,7 +8,7 @@ from scipy.optimize import curve_fit
 
 # Leggi i dati
 print('Reading the data...')
-df = pd.read_json("./data/data.json")
+df = pd.read_json("./data/data_cleaned.json")
 
 # Pre-analisi dei dati
 df['Year'] = df['Date'].apply(af.convert_year)
@@ -88,7 +88,7 @@ axs[1].legend(loc='upper left')
 plt.tight_layout()
 
 # Salvataggio dell'immagine
-plt.savefig('./images/pre_analysis_plots.png')
+plt.savefig('./images/pre_analysis_plots_cleaned.png')
 
 # Stampa i risultati del fit lineare
 print(f"Risultati del fit lineare (Articles):")

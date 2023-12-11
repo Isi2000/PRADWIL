@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 # Read the data
 
-degree_sequence = np.load('./results/degree_sequence.npy')
+degree_sequence = np.load('./results/degree_sequence_cleaned.npy')
 
 # Removing the zeros
 degree_sequence = degree_sequence[degree_sequence != 0]
@@ -66,7 +66,7 @@ plt.legend()
 plt.tight_layout()  # Adjust layout to prevent overlap
 
 #Saving the plot
-plt.savefig('./images/degree_distribution.png', dpi=300, bbox_inches='tight')
+plt.savefig('./images/degree_distribution_cleaned.png', dpi=300, bbox_inches='tight')
 
 # Calculate n_tail and n
 n_tail = np.sum(degree_sequence >= xmin)
@@ -133,5 +133,5 @@ plt.hist(D_values, bins=50)
 plt.xlabel('D value', fontsize=16)
 plt.ylabel('Frequency', fontsize=16)
 plt.title('D values distribution', fontsize=18)
-plt.savefig('./images/D_values_distribution.png')
+plt.savefig('./images/D_values_distribution_cleaned.png')
 
