@@ -1,0 +1,80 @@
+Creating the author-paper bipartite graph...
+Done!
+Number of authors nodes: 16395
+Number of papers nodes: 4606
+Total number of nodes: 21001
+Total number of edges: 25501
+Projecting the graph on the authors nodes (collaboration network)... 
+Done!
+Number of nodes (authors):  16395
+Number of edges:  89229
+Density:  0.0006639565654584761
+Is connected: False
+Number of connected components:  1426
+Number of connected components with more than one node:  1220
+Percentage of nodes in the largest connected component:  0.5674900884415981
+Lengths of the connected components:  [9304, 115, 66, 42, 38, 38, 37, 33, 32, 30, 28, 28, 27, 26, 26, 25, 23, 23, 22, 20, 20, 20, 19, 19, 19, 18, 18, 17, 17, 17, 16, 16, 16, 16, 16, 15, 15, 15, 15, 15, 15, 15, 15, 15, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+Number of nodes of the largest connected component: 9304
+Computing the degree sequence...
+Saving the results...
+Degree sequence saved!
+Density:  0.0015622878519295314
+Clustering coefficient: 0.023354056815194105
+Clustering coefficient (unweighted): 0.8819180613003283
+Average shortest path: 4.247486335117093
+Average shortest path (unweighted): 5.828703912947395
+Ranking of authors by degree centrality:-------------------------------------------------- 
+Author:  Butler Merlin G Degree centrality:  0.0419219606578523
+Author:  Tauber Maithe Degree centrality:  0.03977211652155219
+Author:  Grugni Graziano Degree centrality:  0.038267225626142105
+Author:  Crino Antonino Degree centrality:  0.028485434805976567
+Author:  Miller Jennifer L Degree centrality:  0.02708803611738149
+Author:  Poitou Christine Degree centrality:  0.024508223153821347
+Author:  Horsthemke B Degree centrality:  0.022465871224336235
+Author:  Driscoll Daniel J Degree centrality:  0.022465871224336235
+Author:  Nicholls R D Degree centrality:  0.021928410190261205
+Author:  Haqq Andrea M Degree centrality:  0.021713425776631195
+Ranking of authors by betweenness centrality:--------------------------------------------- 
+Author:  Tauber Maithe Betweenness centrality:  0.5323950561228123
+Author:  Muscatelli F Betweenness centrality:  0.32807490786270616
+Author:  Lalande M Betweenness centrality:  0.2893231482100546
+Author:  Driscoll Daniel J Betweenness centrality:  0.2628437882475325
+Author:  Poitou Christine Betweenness centrality:  0.2419661487732451
+Author:  Butler Merlin G Betweenness centrality:  0.19054176233586645
+Author:  Horsthemke B Betweenness centrality:  0.15191419978045487
+Author:  Goldstone Anthony P Betweenness centrality:  0.14583306955090927
+Author:  Miller Jennifer L Betweenness centrality:  0.14460032303416068
+Author:  Nicholls R D Betweenness centrality:  0.14175658520017273
+Ranking of authors by closeness centrality:------------------------------------------------
+Author:  Tauber Maithe Closeness centrality:  0.4348511229628494
+Author:  Diene Gwenaelle Closeness centrality:  0.4302209414310023
+Author:  Molinas Catherine Closeness centrality:  0.43014805666645134
+Author:  Poitou Christine Closeness centrality:  0.42940630719884265
+Author:  Coupaye Muriel Closeness centrality:  0.4280123002608327
+Author:  Driscoll Daniel J Closeness centrality:  0.4252532093354955
+Author:  Hoybye Charlotte Closeness centrality:  0.42450721110716516
+Author:  Salles Jean Pierre Closeness centrality:  0.4241630594054139
+Author:  Miller Jennifer L Closeness centrality:  0.42298340814716345
+Author:  Butler Merlin G Closeness centrality:  0.4219192042104687
+Ranking of authors by eigenvector centrality:-----------------------------------------------
+Author:  Grugni Graziano Eigenvector centrality:  0.4044163251604856
+Author:  Crino Antonino Eigenvector centrality:  0.318194149949268
+Author:  Poitou Christine Eigenvector centrality:  0.1955196940330076
+Author:  Butler Merlin G Eigenvector centrality:  0.19377855265197583
+Author:  Coupaye Muriel Eigenvector centrality:  0.17572046885210396
+Author:  Tauber Maithe Eigenvector centrality:  0.1664662841533587
+Author:  Miller Jennifer L Eigenvector centrality:  0.1656426857955991
+Author:  Pellikaan Karlijn Eigenvector centrality:  0.1593625047637334
+Author:  Sartorio Alessandro Eigenvector centrality:  0.15926731930281748
+Author:  Hoybye Charlotte Eigenvector centrality:  0.148279778113608
+Ranking of authors by Borda score:----------------------------------------------------------
+Author:  Tauber Maithe Borda score:  37206
+Author:  Poitou Christine Borda score:  37198
+Author:  Butler Merlin G Borda score:  37195
+Author:  Grugni Graziano Borda score:  37190
+Author:  Miller Jennifer L Borda score:  37186
+Author:  Driscoll Daniel J Borda score:  37186
+Author:  Crino Antonino Borda score:  37185
+Author:  Goldstone Anthony P Borda score:  37166
+Author:  Hoybye Charlotte Borda score:  37142
+Author:  Caixas Assumpta Borda score:  37136
