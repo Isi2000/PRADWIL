@@ -266,7 +266,7 @@ PWS collaboration network.
 
 In order to combine the results, we used the Borda count method.
 
-In partucilar, we perfomed a ranking for each metric by arranging authors in descending order based on their metric values. Each author received a score corresponding to the count of authors ranked below them. Subsequently, we sum the scores obtained by each author across all metrics and the final ranking is obtained by arranging authors in descending order based on their total scores.
+In particular, we perfomed a ranking for each metric by arranging authors in descending order based on their metric values. Each author received a score corresponding to the count of authors ranked below them. Subsequently, we sum the scores obtained by each author across all metrics and the final ranking is obtained by arranging authors in descending order based on their total scores.
 
 
 #### Community detection and Louvain algorithm
@@ -340,11 +340,17 @@ We performed a preliminary analysis of the dataset in order study the evolution 
 the number of authors and the number of authors per paper over time.
 The following figure show how these quantities evolved by a four-year window over the period 1960 - 2023.
 
-![Pre_analysis](./images/pre_analysis_plots_cleaned.png)
+![Pre_analysis](./images/pre_analysis_plots.png)
 
 The three plotted quantities show a clear increasing trend over time.
 We performed a linear regression analysis on the number of articles, finding a R-squared of 0.95, indicating a clear linear trend in the increase of the number of articles over time.
 On the other hand, we fitted the number of authors per paper with a second-degree polynomial, and we found a R-squared of 0.99, indicating a clear polynomial trend in the increase of the number of authors per paper over time.
+
+Subsequently, we examined the distribution of authors' activity duration, calculating the difference between the year of their last publication and the year of their first publication. The following histogram illustrates the distribution of years of activity.
+
+![Activity duration](./images/years_histogram.png)
+
+As depicted in the figure, most authors exhibit an activity duration of less than 1 year, indicating either a single publication or the concentration of all their papers within the same year.  The author with the longest activity period has been active for 41 years, which represents about 65% of the total analysis period.
 
 ### The coauthorship collaboration network
 
@@ -352,7 +358,7 @@ We constructed the coauthorship collaboration network from the bipartite network
 The resulting network contains 25501 edges and a total number of 21001 nodes, where 16395 are authors nodes and 4606 are paper nodes.
 The following figure provides a visualization of the entire bipartite network:
 
-![Bipartite network](./images/bipartite_graph.png)
+![Bipartite network](./images/bipartite_plot.png)
 
 Subsequently, we projected the bipartite network onto the set of author nodes, generating a weighted coauthorship collaboration network. The resultant network comprises 16,395 nodes and 89,229 edges. 
 The coauthorship collaboration network is not connected and it consists of 1,426 connected components.
@@ -360,7 +366,7 @@ The largest connected component contains 9,304 nodes, which is about 57% of the 
 collaboration network. The other connected components exhibit considerably smaller sizes, with the majority containing fewer than 20 nodes each.
 The following figure shows the histogram of the number of nodes in the connected components where the largest connected component is excluded:
 
-![Connected components](./images/connected_components_histogram_cleaned.png)
+![Connected components](./images/connected_components_histogram.png)
 
 Subsequently, since the largest connected component contains the majority of the nodes in the network and
 the other connected components are very small, we decided to focus our analysis on the largest connected component.
@@ -376,7 +382,7 @@ The results are summarized in the following table:
 | --- | --- | --- |
 | Density | - | 0.002 |
 | Average clustering coefficient | 0.023 | 0.882 |
-| Average shortest path | 4.359 | 5.926 |
+| Average shortest path | 4.247 | 5.829 |
 
 The low value of the density suggests that the coauthorship collaboration network is a sparse graph. The unweighted average clustering coefficient is quite high, indicating that the nodes in the network tend to cluster together. 
 
@@ -396,16 +402,23 @@ The results are summarized in the following table:
 The plot of the empirical degree distribution and the cumulative degree distribution with the fitted power law
 are shown in the following figures:
 
-![Degree distribution](./images/degree_distribution_cleaned.png)
-
+![Degree distribution](./images/degree_distribution.png)
 
 The alpha value is slightly outside the typical range of 2 < alpha < 3, but it is notably close to the upper limit of 3. Additionally, given the graphs and the low D value, the power-law model seems to provide a good fit to the data. Subsequently, we continued our analysis by estimating the p-value.
-We found p-value close to 1, indicating that the difference between the empirical data and the model can be attributed to statistical fluctuations. Therefore, the model provides a plausible fit for the data.
+We found a p-value close to 1, indicating that the difference between the empirical data and the model can be attributed to statistical fluctuations. Therefore, the model provides a plausible fit for the data.
 
 ### Identification of the most influential nodes
 
 We determined the most influential authors within the largest connected component of the coauthorship collaboration network by assessing the four centrality metrics: degree centrality, betweenness centrality, closeness centrality, and eigenvector centrality for each node. 
 These metrics capture distinct aspects of a node's significance within the network.
+
+We analyzed the scatter plots of the four centrality metrics to identify distinctive nodes in the network. Nodes with particularly high values were marked on the figure, along with their labels. The following figure shows the scatter plots of the four centrality metrics:
+
+![Centrality metrics](./images/centrality_scatter.png)
+
+
+Based on the scatter plots, Tauber Maithe and Grugni Graziano emerge as key authors in the network. Tauber Maithe shows high closeness centrality, indicating strong proximity to other authors, and significant betweenness centrality, suggesting a potential intermediary role in the flow of information within the network. Grugni Graziano's leading position in eigenvector centrality signifies influence over well-connected authors and his third position in degree centrality also suggests a notable network of direct connections. Both authors play essential roles in information flow and network connections within the scientific community.
+
 The final ranking was derived by combining the results of the four metrics using the
 Borda count method.
 The table below presents the top 10 authors for each metric and the top 10 most influential authors in the
@@ -413,16 +426,29 @@ final ranking:
 
 | Degree centrality | Betweenness centrality | Closeness centrality | Eigenvector centrality | Borda score |
 | --- | --- | --- | --- | --- |
-| Butler Merlin G | Tauber Maithé | Poitou Christine | Grugni Graziano | Poitou Christine |
-| Grugni Graziano | Muscatelli F | Coupaye Muriel | Crinò Antonino | Grugni Graziano |
-| Crinò Antonino | Molinas Catherine | Tauber Maithé | Sartorio Alessandro | Crinò Antonino |
-| Miller Jennifer L | Lalande M | Goldstone Anthony P | Butler Merlin G | Butler Merlin G |
-| Tauber Maithé | Poitou Christine | Grugni Graziano | Poitou Christine | Miller Jennifer L |
-| Poitou Christine | Goldstone Anthony P | Crinò Antonino | Pellikaan Karlijn | Goldstone Anthony P |
-| Driscoll Daniel J | Butler Merlin G | Pellikaan Karlijn | Coupaye Muriel | Coupaye Muriel |
-| Horsthemke B | Miller Jennifer L | Molinas Catherine | Miller Jennifer L | Driscoll Daniel J |
-| Nicholls R D | Nicholls R D | Caixàs Assumpta | Caixàs Assumpta | Tauber Maithé |
-| Haqq Andrea M | Horsthemke B | Sartorio Alessandro | Rosenberg Anna G W | Caixàs Assumpta |
+| Butler Merlin G | Tauber Maithe | Tauber Maithe | Grugni Graziano | Tauber Maithe |
+| Tauber Maithe | Muscatelli F | Diene Gwenaelle | Crino Antonino | Poitou Christine |
+| Grugni Graziano | Lalande M | Molinas Catherine | Poitou Christine | Butler Merlin G |
+| Crino Antonino | Driscoll Daniel J | Poitou Christine | Butler Merlin G | Grugni Graziano |
+| Miller Jennifer L | Poitou Christine | Coupaye Muriel | Coupaye Muriel | Miller Jennifer L |
+| Poitou Christine | Butler Merlin G | Driscoll Daniel J | Tauber Maithe | Driscoll Daniel J |
+| Horsthemke B | Horsthemke B | Hoybye Charlotte | Miller Jennifer L | Crino Antonino |
+| Driscoll Daniel J | Goldstone Anthony P | Salles Jean Pierre | Pellikaan Karlijn | Goldstone Anthony P |
+| Nicholls R D | Miller Jennifer L | Miller Jennifer L | Sartorio Alessandro | Hoybye Charlotte |
+| Haqq Andrea M | Nicholls R D | Butler Merlin G | Hoybye Charlotte | Caixas Assumpta |
+
+
+Then, we examined the correlation between the values of the four centrality metrics and the authors' periods of activity. To achieve this, we focused on the top 50 authors for each metric and created scatter plots depicting the relationships between the centrality metric values and the authors' activity periods. Furthermore, we computed the Pearson correlation coefficient for each metric. The ensuing figure presents the scatter plots of the four centrality metrics against the authors' activity periods, accompanied by their respective Pearson correlation coefficients.
+
+![Centrality metrics vs activity](./images/centrality_vs_longevity.png)
+
+Across all metrics, we observed a positive correlation between the centrality metric values and the authors' activity periods. However, it's crucial to note that all Pearson correlation coefficients are relatively low, each being less than 0.4. This suggests a weak correlation between the centrality metric values and the authors' activity periods. Specifically, the lowest correlation coefficient is associated with betweenness centrality ($r = 0.19$, indicating a very low correlation), while the highest is linked to closeness centrality ($r = 0.38$, representing a low correlation). Despite the low correlation strength, the small p-values indicate that the correlation coefficients are statistically significant.
+
+Lastly, we extended the analysis to the Borda score, encompassing all authors in the largest connected component. The figure below illustrates the scatter plot depicting the relationship between the Borda score and the authors' activity periods, accompanied by the corresponding Pearson correlation coefficient.
+
+![Borda score vs activity](./images/corr_borda_scatter.png)
+
+Here, the Pearson correlation coefficient is $r = 0.45$, signifying a moderate positive correlation between the Borda score and the authors' activity periods. Notably, the small p-value emphasizes the statistical significance of this correlation coefficient.
 
 ### Community detection and Louvain algorithm
 
@@ -435,9 +461,11 @@ The modularity of the final partition is about $Q = 0.903$.
 
 Below one can find a plot of the largest communities with authors colored by their highest central measure ranking.
 
-![Largest communities  ](./images/color_comm.png)
+![Largest communities ](./images/main_communities.png)
 
-Lastly we show all communities contained in the largest connected component
+Lastly we show all communities contained in the largest connected component:
+
+![All communities](./images/collaboration_plot_communities.png)
 
 ## Conclusion
 
